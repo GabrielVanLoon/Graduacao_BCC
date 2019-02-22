@@ -1,0 +1,7 @@
+i nome rua
+i data nascimento
+b nome ruas
+b nome rua
+r data nascimento
+b data nascimento
+f
