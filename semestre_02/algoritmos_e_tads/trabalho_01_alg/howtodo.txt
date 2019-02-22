@@ -1,0 +1,28 @@
+******************************************************************************
+FERRAMENTES UTILIZADAS
+******************************************************************************
+- Ubuntu 18.04 LTS (Sistema Operacional utilizado);
+- gcc (Ubuntu 7.3.0-27ubuntu1~18.04) 7.3.0 (Compilador utilizado);
+- valgrind-3.13.0 (Depuração e detecção de Memory Leaks);
+
+******************************************************************************
+COMO COMPILAR O PROGRAMA
+******************************************************************************
+1º - Descompacte a pasta .zip do trabalho;
+
+2º - Acesse, via terminal, a pasta "t1_alg_dinamico" ou "t1_alg_estatico";
+
+3º - Execute o seguinte comando via terminal:
+     $ gcc -o exec fabrica.c main.c -std=c99
+     
+     ou então utilize o utilitário:
+     $ make all
+
+4º - Para verficar vazamentos de memória com uma execução de testes utilize 
+     os comandos:
+	 $ gcc -o exec fabrica.c main.c -std=c99
+	 $ valgrind --leak-check=full ./exec 5 2 2 1001 boneca1 1002 carro 1003 
+	  boneca2 1004 bola 1005 cueca
+
+	 ou então utilize o utilitário:
+	 $ make debug

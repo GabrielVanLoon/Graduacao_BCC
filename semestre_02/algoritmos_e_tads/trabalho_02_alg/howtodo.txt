@@ -1,0 +1,26 @@
+******************************************************************************
+FERRAMENTES UTILIZADAS
+******************************************************************************
+- Ubuntu 18.04 LTS (Sistema Operacional utilizado);
+- gcc (Ubuntu 7.3.0-27ubuntu1~18.04) 7.3.0 (Compilador utilizado);
+- valgrind-3.13.0 (Depuração e detecção de Memory Leaks);
+- GNU gdb (Ubuntu 8.1-0ubuntu3) 8.1.0.20180409-git (Depuração de código)
+
+******************************************************************************
+COMO COMPILAR O PROGRAMA
+******************************************************************************
+1º - Descompacte a pasta .zip do trabalho;
+
+2º - Acesse, via terminal, a pasta descompactada;
+
+3º - Execute o seguinte comando via terminal:
+     $ gcc -o exec analise.c tads/lista_ordenada.c tads/listaord_sentinela.c tads/abb.c tads/buscabin.c tads/listacirc_freq.c tads/pilha.c tads/avl.c main.c -std=c99 -O2
+     
+     ou então utilize o utilitário:
+     $ make all
+
+4º - Para executar o projeto, digite no terminal
+	 $ ./exec
+
+	 ou então o utilitário:
+	 $ make run
