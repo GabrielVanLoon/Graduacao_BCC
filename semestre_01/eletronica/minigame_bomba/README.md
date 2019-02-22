@@ -31,5 +31,6 @@ Gabriel Van Loon Bode da Costa Dourada Fuentes Rojas - gabrielvanloon@usp.br
 Tamiris Fernandes Tinelli - tamiris.tinelli@usp.br  
 Mathias Fernandes Duarte Coelho - mathfernades@usp.br  
 
+## DOCENTE E INSTITUTO
 Prof. Eduardo do Valle Simões  
 ICMC/USP - Jun/2018  
