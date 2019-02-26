@@ -1,0 +1,31 @@
+// Grafo de teste do mapa do ICMC
+digraph "Mapa do ICMC" {
+	V01 [label="Jardim Secreto"]
+	V02 [label="Bloco 3"]
+	V03 [label="Bloco 4"]
+	V04 [label=Biblioteca]
+	V05 [label=Cantina]
+	V06 [label="Praça das Bandeiras"]
+	V07 [label="Bloco 1"]
+	V08 [label="Bloco 6"]
+	V09 [label="Bloco 5"]
+	V10 [label=Estacionamento]
+	V11 [label=Entrada]
+	V12 [label="Clube São Carlos"]
+	V01 -> V02
+	V01 -> V03
+	V02 -> V03
+	V02 -> V04
+	V03 -> V05
+	V03 -> V10
+	V04 -> V05
+	V04 -> V06
+	V05 -> V06
+	V06 -> V07
+	V06 -> V08
+	V06 -> V09
+	V08 -> V09
+	V08 -> V11
+	V09 -> V11
+	V11 -> V10
+}
