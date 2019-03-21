@@ -11,7 +11,6 @@
      * 
      * O grafo é implementado de maneira 0-based 
      */
-    #define GRAFO_DIRECIONADO 1
 
     #define GRAFO_MAXSIZE 101
     #define ARESTA_VAZIA  -1
@@ -44,7 +43,14 @@
         grafo* criar_complementar(grafo* g, int p, int* erro);
 
     /**
-     * Algoritmos de Conectividade
+     * Algoritmos ligados à Caminho Euleriano
+     */
+        int possuiCicloEuleriano(grafo *g, int* erro);
+
+        int percorrerCaminhoEuleriano(grafo* g, int *erro);
+
+    /**
+     * Algoritmos de Conectividade - Austado para percorrer Caminho Euleriano
      */ 
         typedef enum _cor{
             branco, cinza, preto
@@ -58,5 +64,6 @@
         // Utilizando o algoritmo de Kosaraju com DFS: O(V+E).
         // @vInicial controla se o grafo é 0-based ou 1-based
         int eh_fortemente_conectado(grafo *g, int vInicial, int *erro);
+
 
 #endif

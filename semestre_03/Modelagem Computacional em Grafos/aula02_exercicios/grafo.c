@@ -75,6 +75,14 @@
         }
     }
 
+    int grau_vertice(grafo* g, int v){
+        int grau = 0;
+        for(int i = 0; i < g->numVertices; i++)
+            grau += (g->adj[v][i] == ARESTA_VAZIA) ? 0 : 1;
+        return grau;
+
+    }
+
 /**
  * Geradores de grafos associados
  */
@@ -110,11 +118,105 @@
     }
 
 /**
+ * Algoritmos ligados à Caminho Euleriano
+ * */
+    int caminho[GRAFO_MAXSIZE*4];
+    int euleriano_rec(grafo* g, int ini, int atual, int c);
+    
+    
+    int possuiCicloEuleriano(grafo *g, int* erro){
+        if(g == NULL){
+            *erro = 1;
+            return 0;
+        }
+
+        for(int i = 0; i < g->numVertices; i++){
+            int grau = 0;
+            for(int j = 0; j < g->numVertices; j++){
+                if(i == j) continue;
+                if(g->adj[i][j] == ARESTA_VAZIA) continue;
+                grau++;
+            }
+
+            // Caso haja algum vertice de grau impar
+            if(grau % 2 != 0) return 0; // Não ha caminho
+        }
+
+        return 1;
+    }
+
+    int percorrerCaminhoEuleriano(grafo* g, int *erro){
+        if(g == NULL){
+            *erro = 1;
+            return 0;
+        }
+
+        if(!possuiCicloEuleriano(g, erro)){
+            printf("Não é possivel haver um caminho euleriano no grafo!\n");
+            return 0;
+        }
+
+        int tam = euleriano_rec(g, 0, 0, 0);
+        if(!tam){
+            printf("O algoritmo nao detectou um ciclo euleriano\n");
+            return 0;
+        }
+
+        for(int i = 0; i < tam; i++)
+            printf("%d -> ", caminho[i]);
+        printf("%d\n", caminho[tam]);
+        return 1;
+    }
+
+    // Retorno: 1 - Encontrou caminho, 0 - Não encontrou caminho
+    int euleriano_rec(grafo* g, int ini, int atual, int c){
+
+        // Fazendo o track da recursao
+        printf("Posicao %d: Vertice: %d\n", c, atual);
+
+        // Marcando no caminho que passou por aqui.
+        caminho[c] = atual;
+        int erro = 0;
+
+        // Caso de parada ideal: Chegou no fim do caminho
+        if(ini == atual && grau_vertice(g, atual) == 0){
+            // Verifica se todas as arestas ja foram percorridas
+            for(int i = 0; i < g->numVertices; i++)
+                if(grau_vertice(g, i) != 0) return 0; 
+
+
+            return c;
+        }
+
+        // Percorrendo as ligada ao vertice atual
+        for(int i = 0; i < g->numVertices; i++){
+            if(i == atual)                       continue;
+            if(g->adj[atual][i] == ARESTA_VAZIA) continue;
+
+            remover_aresta(g, atual, i, &erro);
+            
+            // Verifica se não removeu uma ponte usando Kosaraju
+            if(!eh_fortemente_conectado(g,ini, &erro) ){
+                inserir_aresta(g, atual, i, 1, &erro);
+                continue;    
+            }
+
+            int result = euleriano_rec(g, ini, i, c+1);
+            if( result > 0 ) return result;
+
+            inserir_aresta(g, atual, i, 1, &erro);
+        }
+
+        // Caso de parada: Não possui mais arestas para visitar
+        return 0;
+    }
+
+/**
  * Algoritmos de Conectividade
  */ 
     void dfs(grafo* g, cor* vis, int v){
         
-        printf("Grafo v: %d\n", v);
+        // printf("Grafo v: %d\n", v);
         // Marcando vertice atual como visitado.
         vis[v] = cinza;
 
@@ -170,7 +272,7 @@
         
         // Caso algum não tenha sido visitado, nao eh SCC
         for(int i = vInicial; i < g->numVertices; i++)
-            if(visitadosG[i] != preto)
+            if(grau_vertice(g, i) != 0 && visitadosG[i] != preto) // @ajuste para usar no Caminho Euleriano
                 return 0;
         
         // Fazendo o DFS no grafo transposto
@@ -178,10 +280,29 @@
 
         // Caso algum não tenha sido visitado, nao eh SCC
         for(int i = vInicial; i < g->numVertices; i++)
-            if(visitadosT[i] != preto)
+            if(grau_vertice(g, i) != 0 && visitadosT[i] != preto)
                 return 0;
 
         destruir_grafo(t, erro);
 
         return 1;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
