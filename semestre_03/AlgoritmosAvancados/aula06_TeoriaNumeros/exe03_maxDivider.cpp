@@ -10,73 +10,30 @@
  */
 #include <iostream>
 #include <set>
-#include <bitset>
-#include <math.h>
+#include <vector.h>
 
 using namespace std;
 
-set<int>        fatores;  // Salva os fatores
-multiset<int>   fatCount; // Salva a potencia dos fatores
-void primeFactors(int n) { 
-    fatores.clear();
-    fatCount.clear();
-
-    while (n%2 == 0){ 
-        fatores.insert(2);
-        fatCount.insert(2);
-        n = n/2; 
-    } 
-  
-    for (int i = 3; i <= sqrt(n); i = i+2) { 
-        while (n%i == 0) { 
-            fatores.insert(i);
-            fatCount.insert(i);
-            n = n/i; 
-        } 
-    } 
-  
-    if (n > 2){
-        fatores.insert(n);
-        fatCount.insert(n);
-    }
-} 
-
 int main(void){
+    int aux;
 
-    // Código para testar a exibição dos fatores
-    primeFactors(179);
-    set<int>::iterator it;
-    for(it = fatores.begin(); it != fatores.end(); it++){
-        cout << *it << "^" << fatCount.count(*it) << " ";
-    } cout << endl;
+    do{ 
+        vector<int> v;
 
-    primeFactors(1059);
-    for(it = fatores.begin(); it != fatores.end(); it++){
-        cout << *it << "^" << fatCount.count(*it) << " ";
-    } cout << endl;
+        // Inicio do caso de teste.
+        cin >> aux;
+        if(aux == 0) break;
 
-     primeFactors(1417);
-    for(it = fatores.begin(); it != fatores.end(); it++){
-        cout << *it << "^" << fatCount.count(*it) << " ";
-    } cout << endl;
+        do{ // Lendo os valores do caso de teste.
+            v.push_back(aux);
+            cin >> aux;
+        }while(aux != 0);
 
-    primeFactors(2312);
-    for(it = fatores.begin(); it != fatores.end(); it++){
-        cout << *it << "^" << fatCount.count(*it) << " ";
-    } cout << endl;
+        int maxDivisor = abs(v[0] - v[1]);
+
+    }
+
+
 
     return 0;
 }
-
-
-
-
-
-
-
-// Código para testar a exibição dos fatores
-//primeFactors(100000);
-//set<int>::iterator it;
-//for(it = fatores.begin(); it != fatores.end(); it++){
-//    cout << *it << "^" << fatCount.count(*it) << " x ";
-//}

@@ -1,0 +1,6 @@
+*******************************************
+* TRABALHO DE ORGANIZAÇÃO DE ARQUIVOS     *
+*******************************************
+    Página geral da disciplina  http://wiki.icmc.usp.br/index.php/SCC0215_012019(cdac)
+    Especificações do projeto   http://wiki.icmc.usp.br/images/3/38/SCC0215012019trabalho1e.pdf
+    Data de entrega             20/04/2019
