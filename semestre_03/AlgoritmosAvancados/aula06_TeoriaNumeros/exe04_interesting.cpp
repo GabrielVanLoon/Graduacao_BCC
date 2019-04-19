@@ -6,8 +6,9 @@
  */
 
 /** 
- * Exercicio 02 - Factorial
+ * Exercicio 04 - Factorial
  * UVA 10139 - Factovisors
+ * Obs.: Solução boa porém não ótima, pois roda em 10s para casos muito longos...
  */
 #include <iostream>
 #include <set>
@@ -42,51 +43,35 @@ void primeFactors(long n) {
     }
 } 
 
-int gcd(long a, long b){
-    return (b == 0) ? a : gcd(b, a % b);
-}
-
-
-long getQtdDivisores(){
-    long divisores = 1;
-           
-    // Encontra os fatores de cada i-ésimo numero no range.
-    primeFactors(i);
-
-    set<int>::iterator it;
-    for(it = fatores.begin(); it != fatores.end(); it++){
-        divisores *= (fatCount.count(*it) + 1);
-    }
-
-    return divisores;
-}
-
 int main(void){
 
     int qtdCasos;
     cin >> qtdCasos;
 
     while(qtdCasos--){
-        // Lendo os numeros limitantes
+        long maisInteressante = -1, qtdDivisores = -1;
         long lower, upper;
+
+        // Lendo os numeros limitantes
         cin >> lower >> upper;
-        
-        primeFactors(lower);
-        long maisInteressante = lower;
-        long qtdDivisores     = getQtdDivisores();
 
-        for(long i = lower + 1; i <= upper; i++){
-            cout << "gcd de " << i << " e " << maisInteressante << " eh " << gcd(i, maisInteressante) << endl;
-        }
+        for(long i = lower; i <= upper; i++){
+           int divisores = 1;
+           
+            // Encontra os fatores de cada i-ésimo numero no range.
+            primeFactors(i);
 
-        /**for(long i = lower; i <= upper; i++){
-          
+            set<int>::iterator it;
+            for(it = fatores.begin(); it != fatores.end(); it++){
+                divisores *= (fatCount.count(*it) + 1);
+                //cout << *it << "^" << fatCount.count(*it) << " x ";
+            }
 
             if(qtdDivisores == -1 || divisores > qtdDivisores){
                 maisInteressante  = i;
                 qtdDivisores      = divisores;
             }
-        }**/
+        }
 
         cout << "Between " << lower << " and " << upper << ", " << maisInteressante << 
                 " has a maximum of " << qtdDivisores << " divisors." << endl;
@@ -94,7 +79,6 @@ int main(void){
     
     return 0;
 }
-
 
 // Código para testar a exibição dos fatores
 //primeFactors(100000);
