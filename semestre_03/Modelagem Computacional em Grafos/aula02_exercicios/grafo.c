@@ -164,6 +164,7 @@
 
         for(int i = 0; i < tam; i++)
             printf("%d -> ", caminho[i]);
+
         printf("%d\n", caminho[tam]);
         return 1;
     }
@@ -176,7 +177,7 @@
 
         // Marcando no caminho que passou por aqui.
         caminho[c] = atual;
-        int erro = 0;
+        int erro   = 0;
 
         // Caso de parada ideal: Chegou no fim do caminho
         if(ini == atual && grau_vertice(g, atual) == 0){

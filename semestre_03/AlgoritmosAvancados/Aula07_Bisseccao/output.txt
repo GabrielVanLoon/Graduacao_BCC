@@ -1,0 +1,17 @@
+Distancia atual: (0,48397): 48398.		 Dist minima: -1 
+Distancia atual: (0,24197): 24198.		 Dist minima: -1 
+Distancia atual: (0,12097): 12098.		 Dist minima: -1 
+Distancia atual: (0,6047): 6048.		 Dist minima: -1 
+Distancia atual: (3024,6047): 3023.		 Dist minima: -1 
+Distancia atual: (3024,4534): 4535.		 Dist minima: -1 
+Distancia atual: (3024,3778): 3779.		 Dist minima: -1 
+Distancia atual: (3024,3400): 3401.		 Dist minima: -1 
+Distancia atual: (3024,3211): 3212.		 Dist minima: 3212 
+Distancia atual: (3118,3211): 3117.		 Dist minima: 3212 
+Distancia atual: (3165,3211): 3164.		 Dist minima: 3212 
+Distancia atual: (3189,3211): 3188.		 Dist minima: 3212 
+Distancia atual: (3201,3211): 3200.		 Dist minima: 3212 
+Distancia atual: (3201,3205): 3206.		 Dist minima: 3206 
+Distancia atual: (3204,3205): 3203.		 Dist minima: 3206 
+Distancia atual: (3204,3203): 3204.		 Dist minima: 3204 
+3204
