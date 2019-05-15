@@ -1,0 +1,1 @@
+typeSearchIndex = [{"p":"<Unnamed>","l":"Baralho"},{"p":"<Unnamed>","l":"Carta"},{"p":"<Unnamed>","l":"EntradaTeclado"},{"p":"<Unnamed>","l":"Jogador"},{"p":"<Unnamed>","l":"Mesa"},{"p":"<Unnamed>","l":"Random"},{"p":"<Unnamed>","l":"VideoPoker"}]
