@@ -31,6 +31,8 @@
  */
     char getTagCampo(const char* campoBusca);
     Registro lerNovoRegistro();
+    void lerValorCampo(char tagCampoBusca, char* valorBusca);
+    void binarioNaTela2(char *nomeArquivoBinario);
 
 int main(void){
  
@@ -42,11 +44,15 @@ int main(void){
     char    nomeArquivoCSV[64];
     char    nomeArquivoBin[64] = "arquivoTrab1.bin";
 
-    int     qtdRegistros, qtdRemocoes, qtdInsercoes;
+    int     qtdRegistros, qtdRemocoes, qtdInsercoes, qtdAtualizacoes;
     char    campoBusca[64];
+    char    tagCampoBusca;
     char    valorBusca[64];
 
-
+    char    campoAtualiza[64];
+    char    tagCampoAtualiza;
+    char    valorAtualiza[64];
+    
 
     // Lendo a opção do usuário
     scanf(" %d", &opcao);
@@ -86,7 +92,8 @@ int main(void){
 
             cabecalho = gvl_carregarCabecalho(&bin);
 
-            if(cabecalho.status != '1' || gvl_setStatusCabecalho(&bin, &cabecalho, '0')){
+            // if(cabecalho.status != '1' || gvl_setStatusCabecalho(&bin, &cabecalho, '0')){
+            if(cabecalho.status != '1'){
                 printf("Falha no processamento do arquivo.\n");
                 break;
             } 
@@ -95,8 +102,6 @@ int main(void){
 
             if(qtdRegistros > 0)
                 printf("Número de páginas de disco acessadas: %d", bin.bf.contadorAcessos);
-
-            gvl_setStatusCabecalho(&bin, &cabecalho, '1');
 
             gvl_fecharArquivo(&bin);
 
@@ -122,7 +127,7 @@ int main(void){
             } 
             
             int  onlyFirst = 0;
-            char tagCampoBusca = getTagCampo(campoBusca);;
+            char tagCampoBusca = getTagCampo(campoBusca);
 
             if(tagCampoBusca == 'i') 
                 onlyFirst = 1;
@@ -158,17 +163,13 @@ int main(void){
             for(int i = 0; i < qtdRemocoes; i++){
                 scanf(" %60s", campoBusca);
                 tagCampoBusca = getTagCampo(campoBusca);
-                char t;
-
-                if(tagCampoBusca == 'n' || tagCampoBusca == 'c')
-                    scanf(" %*c%60[^\n\r\"]%*c", valorBusca);
-                else 
-                    scanf(" %60[^\n\r]", valorBusca);
+                
+                lerValorCampo(tagCampoBusca, &valorBusca[0]);
 
                 onlyFirst = (tagCampoBusca == 'i') ? 1 : 0;
 
                 int c = gvl_removerRegistros(&bin, &cabecalho, tagCampoBusca, valorBusca, onlyFirst);
-                printf("Campo [%s] Tag[%c] Busca[%s] removeu %d\n", campoBusca, tagCampoBusca, valorBusca, c);
+                // printf("Campo [%s] Tag[%c] Busca[%s] removeu %d\n", campoBusca, tagCampoBusca, valorBusca, c);
             }
             
             // Após realizar as exclusões precisa atualizar a lista de removidos
@@ -180,6 +181,7 @@ int main(void){
             gvl_setStatusCabecalho(&bin, &cabecalho, '1');
 
             gvl_fecharArquivo(&bin);
+            binarioNaTela2(nomeArquivoBin);
 
             break;
         
@@ -213,9 +215,58 @@ int main(void){
 
             gvl_setStatusCabecalho(&bin, &cabecalho, '1');
             gvl_fecharArquivo(&bin);
+            binarioNaTela2(nomeArquivoBin);
             break;
 
+        // Atualizar registro baseado no campo
         case 6:
+            scanf(" %60s", nomeArquivoBin);
+            scanf(" %d",   &qtdAtualizacoes);
+
+            if(gvl_abrirArquivo(&bin, nomeArquivoBin, "r+")){
+                printf("Falha no processamento do arquivo.\n");
+                break;
+            }
+
+            cabecalho = gvl_carregarCabecalho(&bin);
+
+            if(cabecalho.status != '1' || gvl_setStatusCabecalho(&bin, &cabecalho, '0')){
+                printf("Falha no processamento do arquivo.\n");
+                break;
+            }
+
+            for(int i = 0; i < qtdAtualizacoes; i++){
+                scanf(" %60s", campoBusca);
+                tagCampoBusca = getTagCampo(campoBusca);
+                lerValorCampo(tagCampoBusca, &valorBusca[0]);
+
+                scanf(" %60s", campoAtualiza);
+                tagCampoAtualiza = getTagCampo(campoAtualiza);
+                lerValorCampo(tagCampoAtualiza, &valorAtualiza[0]);
+
+                onlyFirst = (tagCampoBusca == 'i') ? 1 : 0;
+
+                int c = gvl_atualizarRegistros(&bin, &cabecalho, tagCampoBusca, valorBusca,tagCampoAtualiza, valorAtualiza, onlyFirst);
+                //int c = 0;
+                //printf("Busca: Campo[%s] Tag[%c] Valor[%s]\n", campoBusca,    tagCampoBusca, valorBusca);
+                //printf("Atual: Campo[%s] Tag[%c] Valor[%s]\n", campoAtualiza, tagCampoAtualiza, valorAtualiza);
+                //printf("Atualizou %d\n\n", c);
+            }
+            
+            // Após realizar as exclusões precisa atualizar a lista de removidos
+            gvl_ordenarRegistrosRemovidos(&bin, &cabecalho, 0, tamListaRemovidos-1);
+            // gvl_exibirListaRemovidos(&bin, &cabecalho); 
+            gvl_escreverRegistroRemovidos(&bin, &cabecalho);
+            gvl_limparListaRemovidos(&bin, &cabecalho);        
+
+            gvl_setStatusCabecalho(&bin, &cabecalho, '1');
+
+            gvl_fecharArquivo(&bin);
+            binarioNaTela2(nomeArquivoBin);
+            break;
+        
+        // Exibir lista de removidos
+        case 10: 
             scanf(" %60s", nomeArquivoBin);
 
              if(gvl_abrirArquivo(&bin, nomeArquivoBin, "r+")){
@@ -271,15 +322,17 @@ Registro lerNovoRegistro(){
     else 
         r.salarioServidor = -1;
 
-    scanf(" %60s", valor);
-    if(strcmp(valor, "NULO") != 0)
-        sscanf(valor, "%s", r.telefoneServidor);
-    else 
-        r.telefoneServidor[0] = '\0';
-
     /**
-     * Campos de tamanho variavel
+     * Campos de tamanho variavel ou string
      */
+    scanf(" %c", &c);
+    if(c == 'N'){
+        scanf(" %60s", valor);
+        r.telefoneServidor[0] = '\0';
+    } else {
+        scanf(" %[^\"]%*c", r.telefoneServidor);
+    }
+
     scanf(" %c", &c);
     if(c == 'N'){
         scanf(" %60s", valor);
@@ -326,4 +379,46 @@ Registro lerNovoRegistro(){
     */
 
     return r;
+}
+
+void lerValorCampo(char tagCampoBusca, char* valorBusca){
+    char strAuxiliar[64];
+    char aux;
+
+    if(tagCampoBusca == 'n' || tagCampoBusca == 'c' || tagCampoBusca == 't'){
+        scanf(" %c", valorBusca);
+        if(valorBusca[0] == '"'){
+            scanf("%60[^\n\r\"]%*c", valorBusca);
+            getchar();
+        } else {
+            scanf("%s", valorBusca+1);
+        }
+    } else 
+        scanf(" %s", valorBusca);
+}
+
+void binarioNaTela2(char *nomeArquivoBinario) {
+
+	/* Escolha essa função se você já fechou o ponteiro de arquivo 'FILE *'.
+	*  Ela vai abrir de novo para leitura e depois fechar. */
+
+	unsigned char *mb;
+	unsigned long i;
+	size_t fl;
+	FILE *fs;
+	if(nomeArquivoBinario == NULL || !(fs = fopen(nomeArquivoBinario, "rb"))) {
+		fprintf(stderr, "ERRO AO ESCREVER O BINARIO NA TELA (função binarioNaTela2): não foi possível abrir o arquivo que me passou para leitura. Ele existe e você tá passando o nome certo? Você lembrou de fechar ele com fclose depois de usar? Se você não fechou ele, pode usar a outra função, binarioNaTela1, ou pode fechar ele antes de chamar essa função!\n");
+		return;
+	}
+	fseek(fs, 0, SEEK_END);
+	fl = ftell(fs);
+	fseek(fs, 0, SEEK_SET);
+	mb = (unsigned char *) malloc(fl);
+	fread(mb, 1, fl, fs);
+	for(i = 0; i < fl; i += sizeof(unsigned char)) {
+		printf("%02X ", mb[i]);
+		if((i + 1) % 16 == 0)	printf("\n");
+	}
+	free(mb);
+	fclose(fs);
 }

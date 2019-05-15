@@ -23,6 +23,7 @@
      * Bibliotecas e Constantes Importantes
      */
         #include "IOprocessor.h"
+        #include <time.h>
 
     /**
      * @struct Header
@@ -176,22 +177,27 @@
         // TODO
         int gvl_removerRegistros(Arquivo* bin, Header* h, char tagCampo, char* valor, int onlyFirst);
 
+        // TODO
+        int gvl_atualizarRegistros(Arquivo* bin, Header* h, char tagBusca, char* valorBusca, char tagAtualiza, char* valorAtualiza, int onlyFirst);
+        
     /**
      * MANIPULAÇÃO DA LISTA DE REGISTROS REMOVIDOS
      */
         typedef struct _removido{
             int         tamanhoRegistro;
             long        filePos;
+            int         tempoRemocao;
         } RegRemovido;
-
+        
         RegRemovido*    listaRemovidos;
         int             tamListaRemovidos;
+        int             tempoRemovidos;
 
         void gvl_carregarListaRemovidos(Arquivo* bin, Header* h);
 
         void gvl_limparListaRemovidos(Arquivo* bin, Header* h);
 
-        void gvl_inserirNovoRemovido(Arquivo* bin, Header* h, Registro* r, long ptrPos);
+        void gvl_inserirNovoRemovido(Arquivo* bin, Header* h, Registro* r, long ptrPos, int getTime);
 
         void gvl_ordenarRegistrosRemovidos(Arquivo* bin, Header* h, int l, int r);
 

@@ -257,6 +257,72 @@
         return r;
     }
 
+    Registro gvl_alterarRegistro(Registro* r, char tagCampo, char* valor){
+        Registro nr = *r; // nr novo registro
+        int novoTamanho;
+
+        if(r->nomeServidor != NULL){
+            nr.nomeServidor = malloc(strlen(r->nomeServidor)+1);
+            strcpy(nr.nomeServidor, r->nomeServidor);
+        }
+
+        if(r->cargoServidor != NULL){
+            nr.cargoServidor = malloc(strlen(r->cargoServidor)+1);
+            strcpy(nr.cargoServidor, r->cargoServidor);
+        }
+
+        if(strcmp(valor, "NULO") == 0){
+            switch (tagCampo){
+                case 'i':
+                    nr.idServidor = -1;
+                    break;
+                case 's':
+                    nr.salarioServidor = -1;
+                    break;
+                case 't':
+                    memset(&nr.telefoneServidor, GVL_LIXO_MEM, 15*sizeof(char));
+                    nr.telefoneServidor[0] = '\0';
+                    break;
+                case 'n':
+                    nr.nomeServidor = NULL;
+                    break;
+                case 'c':
+                    nr.cargoServidor = NULL;
+                    break;
+            }
+
+        } else {
+            switch (tagCampo){
+                case 'i':
+                    sscanf(valor, "%d", &nr.idServidor);
+                    break;
+                case 's':
+                    sscanf(valor, "%lf", &nr.salarioServidor);
+                    break;
+                case 't':
+                    strcpy(nr.telefoneServidor, valor);
+                    break;
+                case 'n':
+                    nr.nomeServidor = malloc(strlen(valor)*sizeof(char));
+                    strcpy(nr.nomeServidor, valor);
+                    break;
+                case 'c':
+                    nr.cargoServidor = malloc(strlen(valor)*sizeof(char));
+                    strcpy(nr.cargoServidor, valor);
+                    break;
+            }
+        }
+
+        novoTamanho = 34;
+        novoTamanho += (nr.nomeServidor  != NULL) ? strlen(nr.nomeServidor) + 6 : 0;
+        novoTamanho += (nr.cargoServidor != NULL) ? strlen(nr.cargoServidor) + 6 : 0;
+
+        if(novoTamanho > nr.tamanhoRegistro)
+            nr.tamanhoRegistro = novoTamanho;
+
+        return nr;
+    }
+
     int gvl_inserirNovoRegistro(Arquivo* bin, Header* h, Registro* r){
         if(bin == NULL || bin->fp == NULL || r == NULL || h == NULL)
             return 1;
@@ -269,7 +335,7 @@
         long posicaoInsercao = bin->posicaoPtr;
 
         // veriricando se pode aproveitar o espaço de algum registro removido
-        if(tamListaRemovidos > 0 && r->tamanhoRegistro <= listaRemovidos[tamListaRemovidos-1].tamanhoRegistro){
+        if(tamListaRemovidos > 0){
             for(int i = 0; i < tamListaRemovidos; i++){
                 
                 // Esse espaço já foi utilizado por outra inserção
@@ -287,7 +353,7 @@
             }
         }
 
-        printf("Escrevendo na posicao... %ld\n", posicaoInsercao);
+        // printf("Escrevendo na posicao... %ld\n", posicaoInsercao);
         gvl_seek(bin, posicaoInsercao, SEEK_SET);
         gvl_escreverRegistro(bin, h, r);
 
@@ -344,6 +410,22 @@
         else if(tagCampo == 's') return gvl_comparaSalario(r, valor);
         else if(tagCampo == 't') return gvl_comparaTelefone(r, valor);
         else return 0;
+    }
+
+    int gvl_ehCampoNulo(Registro* r, char tagCampo){
+        // Fazendo a busca e verificando se o campo desejado é nulo
+        if(tagCampo == 'i') 
+            return (r->idServidor == -1) ? 1 : 0;
+        else if(tagCampo == 'n') 
+            return (r->nomeServidor == NULL) ? 1 : 0;
+        else if(tagCampo == 'c') 
+            return (r->cargoServidor == NULL) ? 1 : 0;
+        else if(tagCampo == 's') 
+            return (r->salarioServidor == -1) ? 1 : 0;
+        else if(tagCampo == 't') 
+            return (strlen(r->telefoneServidor) != 14) ? 1 : 0;
+        else 
+            return 0;
     }
 
 /** Manipulação de registros em lotes
@@ -566,8 +648,16 @@
                 break;
             }
 
+            // Se a busca for por campo nulo e o campo existe
+            if(strcmp(valor, "NULO") == 0){
+                
+                if(!gvl_ehCampoNulo(&aux, tagCampo)){
+                    gvl_destruirRegistro(&aux);
+                    continue;
+                }
+                
             // Verificando se o campo buscado existe no dado
-            if(!gvl_comparaCampo(&aux, tagCampo, valor)){
+            } else if(!gvl_comparaCampo(&aux, tagCampo, valor)){
                 gvl_destruirRegistro(&aux);
                 continue;
             }
@@ -585,11 +675,90 @@
             gvl_escreverRegistro(bin, h, &r);
 
             // Inserindo o elemento na lista de removidos
-            gvl_inserirNovoRemovido(bin, h, &r, posicaoRegistro);
+            gvl_inserirNovoRemovido(bin, h, &r, posicaoRegistro, 1);
 
             // Removendo registro alocado e contando qtd de registros removidos
             gvl_destruirRegistro(&aux);
             qtdRegistros++;
+
+            if(onlyFirst) break;
+
+        } while(1);
+
+        return qtdRegistros;
+    }
+
+    int gvl_atualizarRegistros(Arquivo* bin, Header* h, char tagBusca, char* valorBusca, char tagAtualiza, char* valorAtualiza, int onlyFirst){
+        if(bin == NULL || bin->fp == NULL)
+            return 0;
+
+        // Verificando se a lista de removidos já foi carregada
+        if(h->topoLista != -1 && tamListaRemovidos == 0)
+            gvl_carregarListaRemovidos(bin, h);
+
+        Registro aux;
+        int  qtdRegistros     = 0;
+        long posicaoRegistro = 0;
+
+        // Apontando para o primeiro registro de dados
+        gvl_seek(bin, GVL_TAM_PAGINA, SEEK_SET);
+
+        do{ 
+            posicaoRegistro = bin->posicaoPtr;
+            aux             = gvl_carregarRegistro(bin);
+
+            // Esse registro já foi removido
+            if(aux.removido == '*') {
+                gvl_destruirRegistro(&aux);
+                continue;
+            }
+
+            // Não há mais registros para ler
+            if(aux.removido == GVL_LIXO_MEM) {
+                gvl_destruirRegistro(&aux);
+                break;
+            }
+
+            // Se a busca for por campo nulo e o campo existe
+            if(strcmp(valorBusca, "NULO") == 0){
+                
+                if(!gvl_ehCampoNulo(&aux, tagBusca)){
+                    gvl_destruirRegistro(&aux);
+                    continue;
+                }
+                
+            // Verificando se o campo buscado existe no dado
+            } else if(!gvl_comparaCampo(&aux, tagBusca, valorBusca)){
+                gvl_destruirRegistro(&aux);
+                continue;
+            }
+
+            // Verificando se o valor para atualizar já não é igual ao que deveria
+            if(gvl_comparaCampo(&aux, tagAtualiza, valorAtualiza)){
+                gvl_destruirRegistro(&aux);
+                continue;
+            }
+
+            // Achamos o registro agora precisamos reescrevê-lo
+            Registro regNovo = gvl_alterarRegistro(&aux, tagAtualiza, valorAtualiza);
+
+            // Caso a modificação não tenha alterado o tamanho do registro basta reescrevê-lo
+            if(regNovo.tamanhoRegistro == aux.tamanhoRegistro){
+                gvl_seek(bin, posicaoRegistro, SEEK_SET);
+                gvl_escreverRegistro(bin, h,   &regNovo);
+
+            // Caso não caiba, precisa apagar o registro atual e em seguida inserir o novo registro
+            } else {
+                long auxPos = bin->posicaoPtr;
+                gvl_inserirNovoRegistro(bin, h, &regNovo);
+                gvl_inserirNovoRemovido(bin, h, &aux, posicaoRegistro, 1);
+                gvl_ordenarRegistrosRemovidos(bin, h, 0, tamListaRemovidos-1);
+                gvl_seek(bin, auxPos, SEEK_SET);
+            }
+
+            gvl_destruirRegistro(&aux);
+            gvl_destruirRegistro(&regNovo);
+            qtdRegistros++;      
 
             if(onlyFirst) break;
 
@@ -605,7 +774,7 @@
         if(bin == NULL || bin->fp == NULL || h == NULL)
             return;
         
-        printf("Carregando lista...\n");
+        // printf("Carregando lista...\n");
 
         listaRemovidos      = NULL;
         tamListaRemovidos   = 0;
@@ -635,7 +804,7 @@
                 continue;
             }
             
-            gvl_inserirNovoRemovido(bin, h, &aux, posicaoRegistro);
+            gvl_inserirNovoRemovido(bin, h, &aux, posicaoRegistro, 0);
 
             posicaoRegistro = aux.encadeamentoLista;
 
@@ -656,7 +825,7 @@
         tamListaRemovidos = 0;
     }
 
-    void gvl_inserirNovoRemovido(Arquivo* bin, Header* h, Registro* r, long ptrPos){
+    void gvl_inserirNovoRemovido(Arquivo* bin, Header* h, Registro* r, long ptrPos, int getTime){
         
         tamListaRemovidos += 1;
         if(tamListaRemovidos == 0)
@@ -666,6 +835,7 @@
         
         listaRemovidos[tamListaRemovidos-1].filePos = ptrPos;
         listaRemovidos[tamListaRemovidos-1].tamanhoRegistro = r->tamanhoRegistro;
+        listaRemovidos[tamListaRemovidos-1].tempoRemocao = (getTime) ? ++tempoRemovidos : -tamListaRemovidos;
     }
     
     void _gvl_mergeRegistrosRemovidos(int l, int m, int r){
@@ -686,10 +856,17 @@
         i = j = 0;
         k = l;
         while(i < tamLeft && j < tamRight){
-            if(L[i].tamanhoRegistro <= R[j].tamanhoRegistro){
+            if(L[i].tamanhoRegistro < R[j].tamanhoRegistro){
                 listaRemovidos[k++] = L[i++];
-            } else {
+            
+            } else if(L[i].tamanhoRegistro > R[j].tamanhoRegistro) {
                 listaRemovidos[k++] = R[j++];
+            
+            } else {
+                if(L[i].tempoRemocao >= R[j].tempoRemocao)
+                    listaRemovidos[k++] = L[i++];
+                else
+                    listaRemovidos[k++] = R[j++];
             }
         }
 
@@ -698,7 +875,6 @@
         
         while(j < tamRight)
             listaRemovidos[k++] = R[j++];
-        
     }
 
     void gvl_ordenarRegistrosRemovidos(Arquivo* bin, Header* h, int l, int r){
@@ -754,7 +930,8 @@
             return;
 
         for(int i = 0; i < tamListaRemovidos; i++)
-            printf("[%d] Posicao: %ld\t\tTamanho: %d\n", i+1, listaRemovidos[i].filePos, listaRemovidos[i].tamanhoRegistro);
+            // printf("[%d] Posicao: %ld\t\tTamanho: %d\n", i+1, listaRemovidos[i].filePos, listaRemovidos[i].tamanhoRegistro);
+            printf("[%d] Posicao: %ld\t\tTamanho: %d\t\tTempo: %d\n", i+1, listaRemovidos[i].filePos, listaRemovidos[i].tamanhoRegistro, listaRemovidos[i].tempoRemocao);
     }
 
 /** Funções auxiliares para manipulação dos dados
