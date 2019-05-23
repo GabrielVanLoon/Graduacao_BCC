@@ -47,11 +47,11 @@ int main(void){
     int     qtdRegistros, qtdRemocoes, qtdInsercoes, qtdAtualizacoes;
     char    campoBusca[64];
     char    tagCampoBusca;
-    char    valorBusca[64];
+    char    valorBusca[164];
 
     char    campoAtualiza[64];
     char    tagCampoAtualiza;
-    char    valorAtualiza[64];
+    char    valorAtualiza[164];
     
 
     // Lendo a opção do usuário
@@ -250,7 +250,7 @@ int main(void){
                 //int c = 0;
                 //printf("Busca: Campo[%s] Tag[%c] Valor[%s]\n", campoBusca,    tagCampoBusca, valorBusca);
                 //printf("Atual: Campo[%s] Tag[%c] Valor[%s]\n", campoAtualiza, tagCampoAtualiza, valorAtualiza);
-                //printf("Atualizou %d\n\n", c);
+                // printf("Atualizou %d\n\n", c);
             }
             
             // Após realizar as exclusões precisa atualizar a lista de removidos
@@ -388,7 +388,7 @@ void lerValorCampo(char tagCampoBusca, char* valorBusca){
     if(tagCampoBusca == 'n' || tagCampoBusca == 'c' || tagCampoBusca == 't'){
         scanf(" %c", valorBusca);
         if(valorBusca[0] == '"'){
-            scanf("%60[^\n\r\"]%*c", valorBusca);
+            scanf("%160[^\n\r\"]%*c", valorBusca);
             getchar();
         } else {
             scanf("%s", valorBusca+1);

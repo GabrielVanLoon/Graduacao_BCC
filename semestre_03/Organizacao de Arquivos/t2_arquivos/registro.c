@@ -352,9 +352,21 @@
                 }
             }
         }
-
-        // printf("Escrevendo na posicao... %ld\n", posicaoInsercao);
+        
         gvl_seek(bin, posicaoInsercao, SEEK_SET);
+
+        // Verificando se o registro não irá extourar o fim de nenhuma página
+        // Caso isso aconteça realiza o ofsset e escreve no início da próxima.
+        // Obs.: Causa uma fragmentação externa que bugaria meu código. Porém consegue
+        // ser resolvida ao ajustar as cláusulas de parada.
+        long espacoLivre = GVL_TAM_PAGINA - (posicaoInsercao%GVL_TAM_PAGINA);
+        if(espacoLivre < (r->tamanhoRegistro + 5)){
+            char lixo = GVL_LIXO_MEM;
+            for(long i = 0; i < espacoLivre; i++)
+                gvl_escreverArquivo(bin, &lixo, sizeof(char));
+        }
+            
+        // printf("Escrevendo na posicao... %ld\n", posicaoInsercao);
         gvl_escreverRegistro(bin, h, r);
 
         return 0;
@@ -720,8 +732,7 @@
             }
 
             // Se a busca for por campo nulo e o campo existe
-            if(strcmp(valorBusca, "NULO") == 0){
-                
+            if(strcmp(valorBusca, "NULO") == 0){               
                 if(!gvl_ehCampoNulo(&aux, tagBusca)){
                     gvl_destruirRegistro(&aux);
                     continue;

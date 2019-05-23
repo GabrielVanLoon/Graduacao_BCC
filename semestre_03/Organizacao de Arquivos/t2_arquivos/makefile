@@ -11,8 +11,8 @@ verify:
 	meld    temp1.txt temp2.txt
 
 case: 
-	hexdump -Cv binarios/binario-7.bin        > temp1.txt 
-	hexdump -Cv binarios/binario-7-depois.bin > temp2.txt
+	hexdump -Cv binarios/binario-15.bin        > temp1.txt 
+	hexdump -Cv binarios/binario-15-depois.bin > temp2.txt
 	meld    temp1.txt temp2.txt
 
 case10: 

@@ -1,4 +1,4 @@
 all:
-	g++ -o exec exe07.cpp -Wall
+	g++ -o exec exe08.cpp -Wall
 run:
 	./exec
