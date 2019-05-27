@@ -1,0 +1,8 @@
+/**
+ * Trabalho de Organização de arquivos
+ * Título: T3 - Ordernação, Merging e Matching de arquivos.
+ * Autor:  Gabriel Van Loon Bode da Costa Dourado Fuentes Rojas
+ *         Tamiris Fernandes Tinelli
+ * Prof.:  Dra. Cristina Dutra de Aguiar Ciferri
+ * Data:   maior/2019
+ */

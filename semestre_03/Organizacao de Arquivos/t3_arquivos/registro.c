@@ -382,8 +382,35 @@
             free(r->cargoServidor);
             r->cargoServidor = NULL;
         }
+        r->removido = GVL_LIXO_MEM;
     }
     
+    int  gvl_calcularTamanhoMinimo(Registro *r){
+        if(r == NULL)
+            return 0;
+        
+        int tam = 34;
+        if(r->nomeServidor != NULL)
+            tam += strlen(r->nomeServidor) + 6;
+        if(r->cargoServidor != NULL)
+            tam += strlen(r->cargoServidor) + 6;
+        
+        return tam;
+    }
+
+    void gvl_ajustarTamanho(Arquivo* bin, Registro *ant, Registro *atual){
+        // Verifica se precisa fazer o ajuste de fim de pagina
+        int tamAnterior  = gvl_calcularTamanhoMinimo(ant);
+        int tamAtual = gvl_calcularTamanhoMinimo(atual);
+        int espacoSobrando = GVL_TAM_PAGINA - (bin->posicaoPtr % GVL_TAM_PAGINA);
+
+        if(tamAnterior + tamAtual + 10 > espacoSobrando){
+            ant->tamanhoRegistro = tamAnterior + (espacoSobrando - tamAnterior - 5);
+            // printf("Fim de pagina '%s' > %d > %d\n", ant->nomeServidor, espacoSobrando, ant->tamanhoRegistro );
+        } else 
+            ant->tamanhoRegistro = tamAnterior;
+    }
+
     int gvl_comparaId(Registro* r, char* valor){
         if(r == NULL || valor == NULL) return 0;  
         if(r->idServidor == atoi(valor)) return 1;
@@ -440,6 +467,54 @@
             return 0;
     }
 
+    void  _gvl_mergeRegistros(Registro* vet, int l, int m, int r){
+        int i, j, k;
+        int tamLeft  = m - l + 1;
+        int tamRight = r - m;
+
+        // Arrays temporários
+        Registro L[tamLeft], R[tamRight];
+
+        // Copiando os arrays
+        for(i = 0; i < tamLeft; i++)
+            L[i] = vet[l+i];
+        for(j = 0; j < tamRight; j++)
+            R[j] = vet[m+1+j];
+
+        // Fazendo o merge dos dois arrays
+        i = j = 0;
+        k = l;
+        while(i < tamLeft && j < tamRight){
+            if(L[i].idServidor <= R[j].idServidor){
+                vet[k++] = L[i++];
+            } else {
+                vet[k++] = R[j++];
+            } 
+        }
+
+        while(i < tamLeft)
+            vet[k++] = L[i++];
+        
+        while(j < tamRight)
+            vet[k++] = R[j++];
+    }
+
+    int gvl_ordenarRegistros(Registro* vet, int l, int r){
+        if(vet == NULL)
+            return 1;
+
+        if(l < r){
+            int m = (l+r)/2;
+
+            gvl_ordenarRegistros(vet, l,   m);
+            gvl_ordenarRegistros(vet, m+1, r);
+            
+            _gvl_mergeRegistros(vet, l, m, r);
+        }
+
+        return 0;
+    }
+
 /** Manipulação de registros em lotes
  * 
  */
@@ -475,7 +550,6 @@
             gvl_lerLinha(csv, strLinha, tamLinha);
             regAnterior = gvl_textoParaRegistro(strLinha, tamLinha);
 
-            int  cont = 1, max = 5;
             while( (!gvl_lerLinha(csv, strLinha, tamLinha))){
                 
                 if(strLinha[0] == GVL_LIXO_MEM ) 
@@ -776,6 +850,241 @@
         } while(1);
 
         return qtdRegistros;
+    }
+
+    int gvl_ordenarArquivo(Arquivo* binEntrada, Arquivo* binSaida, Header* h){
+        if(binEntrada == NULL || binEntrada->fp == NULL || binSaida == NULL || binSaida->fp == NULL || h == NULL)
+            return 0;
+
+        /**
+         * 1º Percorre todos os registros do arquivo de entrada e salva em um vetor.
+         */
+        Registro aux, *vet = NULL;
+        int      tamVet = 0;
+
+        gvl_seek(binEntrada, GVL_TAM_PAGINA, SEEK_SET);
+
+        do{ 
+            aux = gvl_carregarRegistro(binEntrada);
+            
+            if(aux.removido == GVL_LIXO_MEM){
+                gvl_destruirRegistro(&aux);
+                break;
+            }
+
+            if(aux.removido == '*'){
+                gvl_destruirRegistro(&aux);
+                continue;
+            }
+
+            tamVet          += 1;
+            vet             = realloc(vet, tamVet * sizeof(Registro));
+            vet[tamVet-1]   = aux;
+
+        } while(1);
+        
+        gvl_ordenarRegistros(vet, 0, tamVet-1);
+
+        /**
+         * 2ª Etapa - Escrevendo o cabeçalho do novo arquivo
+         */
+        Header h2    = *h;
+        h2.topoLista = -1;
+        h2.status    = '1';
+
+        gvl_seek(binSaida, 0, SEEK_SET);
+        gvl_escreverCabecalho(binSaida, &h2);
+        binSaida->bf.tamanhoPagina[0] = GVL_TAM_PAGINA; // Apenas para economizar escrita
+
+        /**
+         * 3ª Etapa - Escrevendo os registros de binEntrada em binSaida
+         */
+        gvl_seek(binSaida, GVL_TAM_PAGINA, SEEK_SET);
+
+        Registro atual, anterior;
+        int tamAnterior, tamAtual, espacoSobrando;
+
+        anterior    = vet[0];
+        tamAnterior = gvl_calcularTamanhoMinimo(&anterior);
+
+        for(int i = 1; i < tamVet; i++){
+            atual    = vet[i];
+            tamAtual = gvl_calcularTamanhoMinimo(&atual);
+
+            espacoSobrando = GVL_TAM_PAGINA - (binSaida->posicaoPtr % GVL_TAM_PAGINA);
+
+            if(tamAnterior + tamAtual + 10 > espacoSobrando){
+                anterior.tamanhoRegistro = tamAnterior + (espacoSobrando - tamAnterior - 5);
+                // printf("Fim de pagina '%s' > %d > %d\n", anterior.nomeServidor, espacoSobrando, anterior.tamanhoRegistro );
+            } else 
+                anterior.tamanhoRegistro = tamAnterior;
+
+            gvl_escreverRegistro(binSaida, &h2, &anterior);
+            gvl_destruirRegistro(&anterior);
+
+            anterior    = atual;
+            tamAnterior = tamAtual;
+        }
+
+        gvl_escreverRegistro(binSaida, &h2, &atual);
+        gvl_destruirRegistro(&atual);
+
+
+        return tamVet;
+    }
+
+    int gvl_mergingArquivos(Arquivo* binL, Arquivo* binR, Arquivo* binSaida, Header* h) { 
+        if(binL == NULL || binL->fp == NULL || binR == NULL || binR->fp == NULL || binSaida == NULL || binSaida->fp == NULL)
+            return 0;
+
+        /**
+         * 1ª Etapa - Configurando o Cabeçalho do novo arquivo
+         */
+        Header h2 = (*h);
+        
+        gvl_seek(binSaida, 0, SEEK_SET);
+        gvl_escreverCabecalho(binSaida, &h2);
+        binSaida->bf.tamanhoPagina[0] = GVL_TAM_PAGINA; // Apenas para economizar escrita
+
+        /**
+         * 2ª Etapa - Realizando o Merging
+         */
+        gvl_seek(binL, GVL_TAM_PAGINA, SEEK_SET);
+        gvl_seek(binR, GVL_TAM_PAGINA, SEEK_SET);
+        gvl_seek(binSaida, GVL_TAM_PAGINA, SEEK_SET);
+
+        Registro    l, r, regAnterior, regAtual;
+        int         tamL, tamR, tamAnterior, tamAtual, espacoSobrando, primeiroReg = 1;
+
+        l = gvl_carregarRegistro(binL);
+        r = gvl_carregarRegistro(binR);
+
+        while(l.removido != GVL_LIXO_MEM && r.removido != GVL_LIXO_MEM){
+
+            if(l.idServidor == r.idServidor){
+                gvl_destruirRegistro(&r);
+                r = gvl_carregarRegistro(binR);
+                continue;
+            
+            } else if(l.idServidor < r.idServidor){
+                regAtual = l;
+                l = gvl_carregarRegistro(binL);
+            } else {
+                regAtual = r;
+                r = gvl_carregarRegistro(binR);
+            }
+            
+            if(!primeiroReg){
+                gvl_ajustarTamanho(binSaida, &regAnterior, &regAtual);
+                gvl_escreverRegistro(binSaida, &h2, &regAnterior);
+                gvl_destruirRegistro(&regAnterior);
+            }
+            
+            regAnterior = regAtual;
+            primeiroReg = 0;
+        }
+
+        while(l.removido != GVL_LIXO_MEM){
+            regAtual = l;
+            l = gvl_carregarRegistro(binL);
+
+            if(!primeiroReg){
+                gvl_ajustarTamanho(binSaida, &regAnterior, &regAtual);
+                gvl_escreverRegistro(binSaida, &h2, &regAnterior);
+                gvl_destruirRegistro(&regAnterior);
+            }
+
+            regAnterior = regAtual;
+            primeiroReg = 0;
+        }
+
+        while(r.removido != GVL_LIXO_MEM){
+            regAtual = r;
+            r = gvl_carregarRegistro(binR);
+
+            // gvl_escreverRegistro(binSaida, &h2, &regAtual);
+            // gvl_destruirRegistro(&regAtual);
+
+            if(!primeiroReg){
+                gvl_ajustarTamanho(binSaida, &regAnterior, &regAtual);
+                gvl_escreverRegistro(binSaida, &h2, &regAnterior);
+                gvl_destruirRegistro(&regAnterior);
+            }
+
+            regAnterior = regAtual;
+            primeiroReg = 0;
+        }
+
+        gvl_escreverRegistro(binSaida, &h2, &regAtual);
+        gvl_destruirRegistro(&regAtual);
+
+        return 1;
+    }
+
+    int gvl_matchingArquivos(Arquivo* binL, Arquivo* binR, Arquivo* binSaida, Header* h) { 
+        if(binL == NULL || binL->fp == NULL || binR == NULL || binR->fp == NULL || binSaida == NULL || binSaida->fp == NULL)
+            return 0;
+
+        /**
+         * 1ª Etapa - Configurando o Cabeçalho do novo arquivo
+         */
+        Header h2 = (*h);
+        
+        gvl_seek(binSaida, 0, SEEK_SET);
+        gvl_escreverCabecalho(binSaida, &h2);
+        binSaida->bf.tamanhoPagina[0] = GVL_TAM_PAGINA; // Apenas para economizar escrita
+
+        /**
+         * 2ª Etapa - Realizando o Matching
+         */
+        gvl_seek(binL, GVL_TAM_PAGINA, SEEK_SET);
+        gvl_seek(binR, GVL_TAM_PAGINA, SEEK_SET);
+        gvl_seek(binSaida, GVL_TAM_PAGINA, SEEK_SET);
+
+        Registro    l, r, regAnterior, regAtual;
+        int         tamL, tamR, tamAnterior, tamAtual, espacoSobrando, primeiroReg = 1, matchVazio = 1;
+
+        l = gvl_carregarRegistro(binL);
+        r = gvl_carregarRegistro(binR);
+
+        while(l.removido != GVL_LIXO_MEM && r.removido != GVL_LIXO_MEM){
+
+            if(l.idServidor == r.idServidor){
+                regAtual = l;
+                l = gvl_carregarRegistro(binL);
+                gvl_destruirRegistro(&r);
+                r = gvl_carregarRegistro(binR);
+
+            } else if(l.idServidor < r.idServidor){
+                gvl_destruirRegistro(&l);
+                l = gvl_carregarRegistro(binL);
+                continue;
+
+            } else {
+                gvl_destruirRegistro(&r);
+                r = gvl_carregarRegistro(binR);
+                continue;
+            }
+            
+            if(!primeiroReg){
+                gvl_ajustarTamanho(binSaida,   &regAnterior, &regAtual);
+                gvl_escreverRegistro(binSaida, &h2, &regAnterior);
+                gvl_destruirRegistro(&regAnterior);
+            }
+            
+            regAnterior = regAtual;
+            primeiroReg = 0;
+            matchVazio  = 0;
+        }
+
+        //printf("%d %p %p\n", regAnterior.idServidor, regAnterior.nomeServidor, regAnterior.cargoServidor);
+        
+        if(!matchVazio){
+            gvl_escreverRegistro(binSaida, &h2, &regAnterior);
+            gvl_destruirRegistro(&regAnterior);
+        }
+
+        return 1;
     }
 
 /** Manipulação da lista de registros removidos

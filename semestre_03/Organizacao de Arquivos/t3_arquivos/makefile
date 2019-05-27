@@ -5,17 +5,7 @@ all:
 run:
 	./exec
 
-verify:
-	hexdump -Cv arquivoTrab1.bin > temp1.txt
-	hexdump -Cv _target.bin      > temp2.txt
-	meld    temp1.txt temp2.txt
-
-case: 
-	hexdump -Cv binarios/binario-15.bin        > temp1.txt 
-	hexdump -Cv binarios/binario-15-depois.bin > temp2.txt
-	meld    temp1.txt temp2.txt
-
-case10: 
-	hexdump -Cv output.out > temp1.txt 
-	hexdump -Cv casos/10.out > temp2.txt
+verify: 
+	hexdump -Cv binarios/binario-8-saida.bin          > temp1.txt 
+	hexdump -Cv binariosBackup/binario-8-saida.bin    > temp2.txt
 	meld    temp1.txt temp2.txt

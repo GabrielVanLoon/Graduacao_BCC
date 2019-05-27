@@ -180,6 +180,15 @@
         // TODO
         int gvl_atualizarRegistros(Arquivo* bin, Header* h, char tagBusca, char* valorBusca, char tagAtualiza, char* valorAtualiza, int onlyFirst);
         
+        // TODO
+        int gvl_ordenarArquivo(Arquivo* binEntrada, Arquivo* binSaida, Header* h);
+
+        // TODO
+        int gvl_mergingArquivos(Arquivo* binL, Arquivo* binR, Arquivo* binSaida, Header* h);
+
+        // TODO
+        int gvl_matchingArquivos(Arquivo* binL, Arquivo* binR, Arquivo* binSaida, Header* h);
+        
     /**
      * MANIPULAÇÃO DA LISTA DE REGISTROS REMOVIDOS
      */

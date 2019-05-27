@@ -1,9 +1,10 @@
 /**
  * Trabalho de Organização de arquivos
- * Título: T1 - Geração e Leitura de Arquivos Binários
+ * Título: T3 - Ordernação, Merging e Matching de arquivos.
  * Autor:  Gabriel Van Loon Bode da Costa Dourado Fuentes Rojas
+ *         Tamiris Fernandes Tinelli
  * Prof.:  Dra. Cristina Dutra de Aguiar Ciferri
- * Data:   abril/2019
+ * Data:   maior/2019
  * 
  * OBJETIVOS DO TRABALHO
  * Implementar as técnicas de organização de campos e registros
@@ -36,13 +37,15 @@
 
 int main(void){
  
-    Arquivo     bin, csv;
-    Header      cabecalho;
+    Arquivo     bin, bin2, bin3, csv;
+    Header      cabecalho, cabecalho2, cabecalho3;
     Registro    regAux;
     
     int     opcao;
     char    nomeArquivoCSV[64];
-    char    nomeArquivoBin[64] = "arquivoTrab1.bin";
+    char    nomeArquivoBin[64]  = "arquivoTrab1.bin";
+    char    nomeArquivoBin2[64] = "arquivoTrab2.bin";
+    char    nomeArquivoBin3[64] = "arquivoTrab2.bin";
 
     int     qtdRegistros, qtdRemocoes, qtdInsercoes, qtdAtualizacoes;
     char    campoBusca[64];
@@ -264,7 +267,89 @@ int main(void){
             gvl_fecharArquivo(&bin);
             binarioNaTela2(nomeArquivoBin);
             break;
-        
+
+        // Realizar a ordenação interna dos arquivos
+        case 7:
+            scanf(" %60s", nomeArquivoBin);
+            scanf(" %60s", nomeArquivoBin2);
+
+            if( gvl_abrirArquivo(&bin, nomeArquivoBin,   "r+b") ||
+                gvl_abrirArquivo(&bin2, nomeArquivoBin2, "wb")){
+                printf("Falha no processamento do arquivo.\n");
+                break;
+            }
+
+            cabecalho = gvl_carregarCabecalho(&bin);
+
+            if(cabecalho.status != '1'){
+                printf("Falha no processamento do arquivo.\n");
+                break;
+            }
+
+            gvl_ordenarArquivo(&bin, &bin2, &cabecalho);
+            
+            gvl_fecharArquivo(&bin);
+            gvl_fecharArquivo(&bin2);
+            binarioNaTela2(nomeArquivoBin2);
+            break;
+        // Realizar Merging de dois arquivos já ordenados
+        case 8:
+            scanf(" %60s", nomeArquivoBin);
+            scanf(" %60s", nomeArquivoBin2);
+            scanf(" %60s", nomeArquivoBin3);
+
+            if( gvl_abrirArquivo(&bin, nomeArquivoBin,   "r+b") ||
+                gvl_abrirArquivo(&bin2, nomeArquivoBin2, "r+b") || 
+                gvl_abrirArquivo(&bin3, nomeArquivoBin3, "wb")){
+                printf("Falha no processamento do arquivo.\n");
+                break;
+            }
+
+            cabecalho  = gvl_carregarCabecalho(&bin);
+            cabecalho2 = gvl_carregarCabecalho(&bin2);
+
+            if(cabecalho.status != '1' || cabecalho2.status != '1'){
+                printf("Falha no processamento do arquivo.\n");
+                break;
+            }
+
+            gvl_mergingArquivos(&bin, &bin2, &bin3, &cabecalho);
+
+            gvl_fecharArquivo(&bin);
+            gvl_fecharArquivo(&bin2);
+            gvl_fecharArquivo(&bin3);
+            binarioNaTela2(nomeArquivoBin3);
+            break;
+
+        // Realizando o Matching de dois arquivos já ordenados
+        case 9:
+            scanf(" %60s", nomeArquivoBin);
+            scanf(" %60s", nomeArquivoBin2);
+            scanf(" %60s", nomeArquivoBin3);
+
+            if( gvl_abrirArquivo(&bin, nomeArquivoBin,   "r+b") ||
+                gvl_abrirArquivo(&bin2, nomeArquivoBin2, "r+b") || 
+                gvl_abrirArquivo(&bin3, nomeArquivoBin3, "wb")){
+                printf("Falha no processamento do arquivo.\n");
+                break;
+            }
+
+            cabecalho  = gvl_carregarCabecalho(&bin);
+            cabecalho2 = gvl_carregarCabecalho(&bin2);
+
+            if(cabecalho.status != '1' || cabecalho2.status != '1'){
+                printf("Falha no processamento do arquivo.\n");
+                break;
+            }
+
+            gvl_matchingArquivos(&bin, &bin2, &bin3, &cabecalho);
+
+            gvl_fecharArquivo(&bin);
+            gvl_fecharArquivo(&bin2);
+            gvl_fecharArquivo(&bin3);
+            binarioNaTela2(nomeArquivoBin3);
+            break;
+
         // Exibir lista de removidos
         case 10: 
             scanf(" %60s", nomeArquivoBin);
