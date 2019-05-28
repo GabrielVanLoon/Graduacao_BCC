@@ -22,6 +22,7 @@
      * Bibliotecas e Constantes Importantes
      */
         #include "IOprocessor.h"
+        #include "index.h"
         #include <time.h>
 
     /**
@@ -52,20 +53,20 @@
             char desCampo5[40];
         } Header;
 
-        /**
-         * @struct Registro
-         * 
-         * Representa um registro de dados, seguindo todos os campos
-         * e nomenclaturas conforme especificadas na documentação do trabalho.
-         * 
-         * ATRIBUTOS
-         * @char removido       - '-' caso o arquivo esteja em suo ou '*' caso
-         *                        o arquivo tenha sido removido.
-         * @int tamanhoRegistro - Tamanho em bytes do registro desconsiderando os
-         *                        5 bytes de @removido e @tamanhoRegistro.
-         * @long encadeamentoLista - proximo elemento da lista de registros removidos
-         * @type ____Servidor      - dados do servidor.
-         */ 
+    /**
+     * @struct Registro
+     * 
+     * Representa um registro de dados, seguindo todos os campos
+     * e nomenclaturas conforme especificadas na documentação do trabalho.
+     * 
+     * ATRIBUTOS
+     * @char removido       - '-' caso o arquivo esteja em suo ou '*' caso
+     *                        o arquivo tenha sido removido.
+     * @int tamanhoRegistro - Tamanho em bytes do registro desconsiderando os
+     *                        5 bytes de @removido e @tamanhoRegistro.
+     * @long encadeamentoLista - proximo elemento da lista de registros removidos
+     * @type ____Servidor      - dados do servidor.
+     */ 
         typedef struct _regDados{
             char    removido;
             int     tamanhoRegistro;
@@ -124,9 +125,9 @@
         int gvl_setStatusCabecalho(Arquivo* bin, Header* h, char flag);
 
     /** 
-     * MANIPULAÇÃO DE REGISTROS DE DADOS 
+     * MANIPULAÇÃO DE REGISTROS DE DADOS
      */ 
-        /**
+         /**
          * @int gvl_inserirNovoRegistro(Arquivo* bin, Header* h, Registro* r);
          * Insere um novo registro no arquivo bin. O Registro pode ser inserido
          * em um espaço de registro lógicamente removido OU no final do arquivo
@@ -244,6 +245,47 @@
 
         void gvl_exibirListaRemovidos(Arquivo* bin, Header* h);
 
+    /**
+     * MANIPULAÇÃO DA LISTA DE INDICES
+     */
+        /**
+         * @int gvl_criarVetorIndices(Arquivo* bin, Header* h, Index** indices, HeaderIndex* hi);
+         * Gera um HeaderIndex e um vetor de indices para um arquivo que ainda não
+         * possui um arquivo .index.
+         * 
+         * Retorna 1 em caso de erro.
+         */
+        int gvl_criarVetorIndices(Arquivo* bin, Header* h, Index** indices, HeaderIndex* hi);
+
+        /**
+         * @int gvl_buscarRegistros2(Arquivo* bin, Header* h, Index** indices, HeaderIndex* hi, char* valor);
+         * Possui a mesma função que a função @gvl_buscarRegistro() porém sem realizar
+         * uma busca sequencial em todo arquivo mas utilizando index e acesso direto.
+         * 
+         * Retorna a quantidade de registros buscados.
+         */
+        int gvl_buscarRegistros2(Arquivo* bin, Header* h, Index** indices, HeaderIndex* hi, char* valor);
+
+        /**
+         * @int gvl_removerRegistros2(Arquivo* bin, Header* h, Index** indices, HeaderIndex* hi, char* valor);
+         * Possui a mesma função que a função @gvl_removerRegistros() porém sem realizar
+         * uma busca sequencial em todo arquivo mas utilizando index e acesso direto.
+         * 
+         * Retorna a quantidade de registros buscados.
+         */
+        int gvl_removerRegistros2(Arquivo* bin, Header* h, Index** indices, HeaderIndex* hi, char* valor);
+
+        /**
+         * @int gvl_inserirNovoRegistro2(Arquivo* bin, Header* h, Index** indices, HeaderIndex* hi, Registro* r);
+         * Possui a mesma função que a função @gvl_inserirNovoRegistro() porém além de
+         * adicionar o registro no arquivo também o adiciona na lista de indices.
+         * 
+         * Obs.: o arquivo de indices não é ordenado após a inserção.
+         * 
+         * Retorna a quantidade de registros buscados.
+         */
+        int gvl_inserirNovoRegistro2(Arquivo* bin, Header* h, Index** indices, HeaderIndex* hi, Registro* r);
+        
     /** 
      * FUNÇÕES AUXILIARES / MISCELÂNIA
      */

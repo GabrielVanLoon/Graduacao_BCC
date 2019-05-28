@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "string.h": "c",
+        "ioprocessor.h": "c",
+        "index.h": "c"
+    }
+}
