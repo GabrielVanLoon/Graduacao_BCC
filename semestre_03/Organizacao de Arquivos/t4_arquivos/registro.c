@@ -669,8 +669,8 @@
             }
 
             // AJUSTE BOBINHO PARA FUNCIONAR A FUNCIONALIDADE 14 NO TRABALHO 4
-            if(qtdRegistros == 0)
-                printf("*** Realizando a busca sem o auxílio de índice\n");
+            //if(qtdRegistros == 0)
+            //    printf("*** Realizando a busca sem o auxílio de índice\n");
 
             // printf("Registro nº %d: \n", qtdRegistros+1);
             printf("%s: %d\n", h->desCampo1, aux.idServidor);

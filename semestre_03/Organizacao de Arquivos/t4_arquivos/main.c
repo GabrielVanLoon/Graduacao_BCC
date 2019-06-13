@@ -546,23 +546,24 @@ int main(void){
             int qtdAcessos;
 
             // Realizando a busca dos registros
+            printf("*** Realizando a busca sem o auxílio de índice\n");
             qtdRegistros =  gvl_buscarRegistros(&bin, &cabecalho, 'n', valorBusca, 0);
-            if( qtdRegistros > 0){
-                printf("Número de páginas de disco acessadas: %d\n", bin.bf.contadorAcessos);
+            printf("Número de páginas de disco acessadas: %d\n", bin.bf.contadorAcessos);
                 
-                // reiniciando o contador de acessos
-                qtdAcessos             = bin.bf.contadorAcessos;
-                bin.bf.contadorAcessos = 1; // Mantém apenas o custo de leitar do header
-                gvl_flushBuffer(&bin);
+            // reiniciando o contador de acessos
+            qtdAcessos             = bin.bf.contadorAcessos;
+            bin.bf.contadorAcessos = 1; // Mantém apenas o custo de leitar do header
+            gvl_flushBuffer(&bin);
 
-                // Realizando a busca dos registros com index
-                printf("*** Realizando a busca com o auxílio de um índice secundário fortemente ligado\n");
-                qtdRegistros =  gvl_buscarRegistros2(&bin, &cabecalho, &indices, &cabecalhoIndex, valorBusca);
-                printf("Número de páginas de disco para carregar o arquivo de índice: %d\n", binIndex.bf.contadorAcessos);
-                printf("Número de páginas de disco para acessar o arquivo de dados: %d\n\n", bin.bf.contadorAcessos);
+            // Realizando a busca dos registros com index
+            printf("*** Realizando a busca com o auxílio de um índice secundário fortemente ligado\n");
+            qtdRegistros =  gvl_buscarRegistros2(&bin, &cabecalho, &indices, &cabecalhoIndex, valorBusca);
+            printf("Número de páginas de disco para carregar o arquivo de índice: %d\n", binIndex.bf.contadorAcessos);
+            printf("Número de páginas de disco para acessar o arquivo de dados: %d\n\n", bin.bf.contadorAcessos);
 
-                printf("A diferença no número de páginas de disco acessadas: %d\n", qtdAcessos - bin.bf.contadorAcessos);
-            }
+            printf("A diferença no número de páginas de disco acessadas: %d\n", qtdAcessos - bin.bf.contadorAcessos);
+            
+     
 
             gvl_fecharArquivo(&bin);
             gvl_fecharArquivo(&binIndex);
