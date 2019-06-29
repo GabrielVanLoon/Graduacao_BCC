@@ -1,0 +1,8 @@
+/**
+ * Trabalho de Organização de arquivos
+ * Título: T4 - Index Secundário Fortemente Ligado
+ * Autor:  Gabriel Van Loon Bode da Costa Dourado Fuentes Rojas
+ *         Tamiris Fernandes Tinelli
+ * Prof.:  Dra. Cristina Dutra de Aguiar Ciferri
+ * Data:   maio/2019
+ */
