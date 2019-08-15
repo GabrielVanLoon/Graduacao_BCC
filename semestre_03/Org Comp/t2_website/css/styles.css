@@ -1,0 +1,137 @@
+/* Estilos do Recurso Educacional Aberto - Memória Cache */
+
+/* Paleta de cores utilizada */
+    .cor-primaria           { color: #832161; } /* Dark Raspberry */
+    .cor-primaria-escura    { color: #3D2645; } /* Russian Violet*/
+    .cor-secundaria         { color: #DB9D47; } /* Persian Orange */
+    .cor-preto              { color: #1A1423; } /* Eerie Black */
+    .cor-cinza-claro        { color: #F0EFF4}   /* Anti-flash White */
+
+    .bg-cor-primaria           { background-color: #832161; } /* Dark Raspberry */
+    .bg-cor-primaria-escura    { background-color: #3D2645; } /* Russian Violet*/
+    .bg-cor-secundaria         { background-color: #DB9D47; } /* Persian Orange */
+    .bg-cor-preto              { background-color: #1A1423; } /* Eerie Black */
+    .bg-cor-cinza-claro        { background-color: #F0EFF4; }   /* Anti-flash White */
+
+/* CUSTOMIZAÇÕES GERAIS */
+
+    body { display: block; position: relative; padding: 40px 0; margin: 0 auto; 
+        max-width: 1000px; background-color: #cdd6e3; border-radius: 2px; }
+    #website-content { padding: 40px; background: #fff; 
+        box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23); }
+    
+    /* col-xs */
+    @media (max-width: 767px) {  
+        body { max-width: none; padding: 20px;  }
+        #website-content { padding: 20px; }
+    }
+
+    /* col-sm */
+    @media (min-width: 768px) and (max-width: 991px) { 
+        body { max-width: 748px; }
+        #website-content { padding: 20px; }
+    }
+
+    /* col-md */
+    @media (min-width: 992px) and (max-width: 1199px) { 
+        body { max-width: 952px; }
+        #website-content { padding: 20px; }
+    }
+
+    /* col-lg */
+    @media (min-width: 1200px) { }
+
+/* CUSTOMIZAÇÕES - HEADER */
+    
+    header { margin-bottom: 20px; }
+    header h1 { border-bottom: solid 1px #832161;
+        color: #832161; font-family: 'Pacifico', cursive; }
+    
+    /* col-xs */
+    @media (max-width: 767px) {  
+        header h1 { font-size: 28px; }
+    }
+
+    /* col-sm */
+    @media (min-width: 768px) and (max-width: 991px) { }
+
+    /* col-md */
+    @media (min-width: 992px) and (max-width: 1199px) { }
+
+    /* col-lg */
+    @media (min-width: 1200px) { }
+
+/* CUSTOMIZAÇÕES - RODAPÉ */
+    
+    footer { padding-top: 20px; margin-top: 20px; border-top: solid 1px #cdd6e3;
+        color: #3F354E; font-size: 16px; font-family: 'PT Mono', monospace; }
+    footer p { margin-bottom: 0; }
+
+/* SIDEBAR */
+
+    #sidebar ul { list-style: none; padding: 0; font-family: 'PT Mono', monospace; }
+    #sidebar ul li { margin-top: 5px; font-size: 12px; }
+    #sidebar ul li:first-child {margin-top: 0px; }
+    #sidebar ul li a { color: #3D2645; font-weight: bold; }
+    #sidebar ul li a:hover { color: #832161; text-decoration: none; }
+    #sidebar ul li a.active { color: #DB9D47; }
+
+    /* Adicionando os pontos no item */
+    #sidebar ul li { overflow: hidden; white-space: nowrap; }
+    #sidebar ul li a:after { content: "........................."; }
+
+    /* Configurações para a animação do scroll */
+    #sidebar.fixed ul { position: fixed; top: 40px; }
+    
+    /* Ajustando a imagem da sidebar */
+    #sidebar ul li img { display: block; max-width: 100%; margin-top: 10px; }
+
+
+    /* col-xs */
+    @media (max-width: 767px) {  
+        #sidebar { display: none; }
+    }
+
+    /* col-sm */
+    @media (min-width: 768px) and (max-width: 991px) { 
+    }
+
+    /* col-md */
+    @media (min-width: 992px) and (max-width: 1199px) { 
+    }
+
+    /* col-lg */
+    @media (min-width: 1200px) { }
+
+/* CONTEÚDOS */
+
+    main section { padding-top: 20px; margin-top: 20px; border-top: solid 1px #cdd6e3; 
+        color: #3F354E; font-size: 16px; font-family: 'PT Mono', monospace; }
+    main section:first-child { padding-top: 0; margin-top: 0; border: none; }
+
+    main section h2 { color: #DB9D47;  font-family: 'Pacifico', cursive; }
+    main section p { text-align: justify; }
+    main section img { display: block; margin: 0 auto; max-width: 100%; max-height: 400px; }
+
+    main section video { margin-bottom: 1rem; min-height: 400px; }
+
+    /* col-xs */
+    @media (max-width: 767px) {  
+        main section h2 { font-size: 22px; }
+        main section p  { font-size: 16px; }
+        main section ul { padding-left: 16px; }
+
+        main section video { min-height: auto; }
+    }
+
+    /* col-sm */
+    @media (min-width: 768px) and (max-width: 991px) {
+        main section video { min-height: auto; }
+    }
+
+    /* col-md */
+    @media (min-width: 992px) and (max-width: 1199px) { }
+
+    /* col-lg */
+    @media (min-width: 1200px) { }
+    

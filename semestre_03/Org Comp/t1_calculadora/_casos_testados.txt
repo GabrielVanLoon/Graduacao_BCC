@@ -1,0 +1,188 @@
+# TRABALHO DE ORGANIZAÇÃO E ARQUITETURA DE COMPUTADORES
+# Título:	Calculadora em Assembly MIPS
+# Profª.:	Sarita
+# Data:		março/2019
+#
+# Membros:	Débora Buzon da Silva
+#		Gabriel Van Loon Bode da Costa Dourado Fuentes Rojas
+#		Mathias Fernandes
+#		Tamiris Tinelli
+#
+# DETALHES:
+# 		>> -> Entradas do usuario
+# 		<< -> Saídas do sistema
+#
+#		Inputs inválidos em todas as operações geram uma mensagem
+#		de erro e redirecionam o usuário de volta ao menu. Por isso os testes
+#		com esses valores serão menos mencionados uma vez que são tratados globalmente.
+
+# TESTANDO A OPERAÇÃO DE SOMA (1)
+	
+	# Teste trivial da operação
+	>>	1
+	>>	20	
+	>> 	10
+	<<	30
+
+	# Teste entrada inválida
+	>>	1
+	>>	a
+	<<	Erro no input, redireciona para o menu
+
+	# Testando valores próximos à 4 bytes
+	>> 1
+	>> 2147483647
+	>> 0
+	<< 2147483647
+
+	# Testando valores acima de 4 bytes
+	>> 1
+	>> 2147483647
+	>> 2147483647
+	<< Erro de overflow, redireciona para o menu
+
+# TESTANDO A OPERAÇÃO DE SUBTRAÇÂO(2)
+	
+	# Teste trivial da operação
+	>>	2
+	>>	20	
+	>> 	10
+	<<	10
+
+	# Teste entrada inválida
+	>>	2
+	>>	a
+	<<	Erro no input, redireciona para o menu
+
+	# Testando valores próximos à 4 bytes
+	>> 2
+	>> 2147483647
+	>> 2147483647
+	<< 0
+
+	# Testando valores acima de 4 bytes
+	>> 2
+	>> 2147483648
+	<< Erro de overflow, redireciona para o menu
+
+# TESTANDO A OPERAÇÃO DE MULTIPLICAÇão (3)
+	
+	# Teste trivial da operação
+	>>	3
+	>>	5	
+	>> 	22
+	<<	110
+
+	# Verificando sinais opostos
+	>>	3
+	>>	-5	
+	>> 	22
+	<<	-110
+
+# TESTANDO A OPERAÇÃO DE DIVISÂO (4)
+
+	# Teste trivial da operação
+	>>	4
+	>>	12	
+	>> 	5
+	<<	2
+	<<	2
+
+	# Verificando sinais opostos
+	>>	3
+	>>	-12	
+	>> 	5
+	<<	-2
+	<<	-2
+
+# TESTANDO A OPERAÇÃO DE DIVISÂO (5)
+
+	# Teste trivial da operação
+	>>	5
+	>>	2	
+	>> 	10
+	<<	1024
+
+	# Verificando ponto flutuantes
+	>>	5
+	>>	1.5	
+	>> 	2
+	<<	2.25
+
+	# Verificando valores negativos
+	>>	5
+	>>	-1.5	
+	>> 	3
+	<<	3.375
+
+# TESTANDO A OPERAÇÃO DE RAIZ QUADRADA (6)
+	
+	# Teste trivial
+	>>	6
+	>>	20
+	<<	4.472136
+
+	# Teste número negativo
+	>>	6
+	>>	-4
+	<<	NaN
+
+# TESTANDO A OPERAÇÃO DE RAIZ QUADRADA (7)
+
+	# Teste trivial
+	>>	7
+	>>	5
+	<<	120
+
+	# Teste numero  <= 0
+	>>	7
+	>>	-2 / 0
+	>>	1
+
+# TESTANDO FIBONACCI DE (A,B) (8)
+
+	# Teste trivial
+	>>	8
+	>>	2
+	>>	5
+	<<	1 2 3 5
+
+	# Teste trivial 2
+	>>	8
+	>>	2
+	>>	10
+	<<	1 1 2 3 5 8 13 21 34 55
+
+	# Teste 'a' negativo
+	>>	8
+	>>	-2
+	>>	3
+	<<	1 1 2
+
+	# Teste 'b' negativo
+	>>	8
+	>>	1
+	>>	-1
+	<<	Sequencia vazia
+
+# TESTANDO A TABUADA (9)
+
+	>> Caso trivial / padrão
+	>>	9
+	>>	22
+	<<	22 x 1 = 22
+		22 x 2 = 44
+		...
+		22 x 10 = 220
+
+# TESTANDO O IMC (10)
+	
+	# Teste trivial 1
+	>>	80
+	>>	1.81
+	<<	26.12245
+
+	# Teste trivial 2
+	>>	90
+	>>	2.0
+	<<	22.5

@@ -1,0 +1,222 @@
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Memória Cache: O que é? Como vive? Onde habita?</title>
+    <meta name="description" content="Artigo em que discorremos um pouco sobre a teoria basica do funcionamento 
+        da memória cache. Temas abordados: Funções de mapeamento, Princípios de localidade, etc."> 
+
+    <!-- Inicializando os estilos -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css?family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=PT+Mono&display=swap" rel="stylesheet"> 
+</head>
+
+<body>
+<div id="website-content">
+        
+    <header class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <h1>Memória Cache: O que é? Como vive? Onde habita?</h1>
+            </div>
+        </div>
+    </header>
+    
+    <main class="container">
+        <div class="row">
+            
+            <!-- Barra de navegação Desktop -->
+            <aside id="sidebar" class="col-xs-3 col-sm-3 col-md-4 col-lg-3">
+                <ul>
+                    <li><a href="#sessao-1">Introdução</a></li>
+                    <li><a href="#sessao-2">Instruções da CPU</a></li>
+                    <li><a href="#sessao-3">Blocos e palavras</a></li>
+                    <li><a href="#sessao-4">Princípio de localidade</a></li>
+                    <li><a href="#sessao-5">Taxas de acerto e erro</a></li>
+                    <li><a href="#sessao-6">Tamanho da cache</a></li>
+                    <li><a href="#sessao-7">Hora da mágica</a></li>
+                    <li><a href="#sessao-8">Mapeamento direto</a></li>
+                    <li><a href="#sessao-9">Mapeamento associativo</a></li>
+                    <li><a href="#sessao-10">Mapeamento por conjuntos</a></li>
+                    <li><a href="#sessao-11">Conclusão</a></li>
+                    <li><img src="src/profa.png" class="img-responsive" alt="Imagem da professora apontando para o conteúdo"></li>
+                </ul>
+            </aside>
+
+            <!-- Região do conteúdo do website -->
+            <div class="spy-this col-xs-12 col-sm-12 col-md-8 col-lg-9">
+                <section id="sessao-1">
+                    <h2>Memória What?</h2>
+                    <p>A memória cache é um dos módulos mais importantes que compõem um processador. Atualmente, ela vem 
+                        embutida em praticamente todos os processadores de última geração, pois seu objetivo é 
+                        <strong>melhorar o desempenho ao minimizar o custo de acesso à memória principal</strong>. Contudo, devido à grande 
+                        quantidade de termos é comum que as pessoas se confundam sobre o que ela é e como ela funciona.</p>
+                    <p>Antes de começarmos, iremos definir alguns conceitos básicos necessários para o entendimento da parte 
+                        teórica dessa tecnologia.</p>
+                </section>
+
+                <section id="sessao-2">
+                    <h2>As instruções da CPU</h2>
+                    <p>Seja para buscar dados ou carregar novas instruções. A memória principal tem um papel muito importante para 
+                        o bom funcionamento do computador, pois é nela que ficam carregados os programas assim que ligamos o 
+                        sistema operacional.</p>
+                    <p>Porém, é muito caro buscar dados na memória principal e é aí que entra a memória 
+                        cache, que serve como uma <strong>cópia de trechos da memória principal</strong>, só que mais próxima 
+                        do processador e de acesso mais rápido!!</p>
+                    <p>A abstração mais simples da importância da memória cache pode ser vista na animação abaixo:</p>
+
+                    <video width="320" height="240" class="embed-responsive"  loop autoplay muted>
+                        <source src="src/animacao_memoria_cache.mp4" type="video/mp4">
+                        Seu navegador não suporta vídeos embutidos...
+                    </video> 
+
+                    <p>Veja que na primeira imagem, a busca dos dados da memória principal é feita diretamente e, por isso,
+                         ela é mais demorada pois os dados precisam ser buscados um a um.</p>
+                    <p>Já na segunda imagem, há a inserção de uma cache de 1 nível. O caminho percorrido para buscar o 
+                        bloco de memória solicitado pela CPU é menor e isso já causa uma melhora no tempo de acesso.</p>
+                    <p>A terceira imagem mostra a inserção de um segundo nível que, além de diminuir o caminho em partes menores também permite que 
+                        blocos maiores sejam buscados nos níveis mais distantes. Na prática, seria possível inserir quantos 
+                        níveis fosse desejado, mas o mais comum é a divisão da cache em 3 níveis.</p>
+                    
+                </section>
+
+                <section id="sessao-3">
+                    <h2>Blocos e Palavras</h2>
+                    <p>O primeiro conceito importantes para entender o funcionamento de uma cache é saber a 
+                        diferença entre as definições de bloco e palavra.</p>
+                    <ul>
+                        <li><strong>Palavra:</strong> é o menor conjunto de dados que o processador pode solicitar para a memória principal. 
+                            Ele pode representar um valor ou uma instrução, por exemplo.</li>
+                        <li><strong>Bloco:</strong> é um conjunto de palavras.</li>
+                    </ul>
+                </section>
+                
+                <section id="sessao-4">
+                    <h2>Princípio de localidade</h2>
+                    <p>A memória cache, apesar de eficiente, não possui tanta disponibilidade de espaço quanto uma memória 
+                        principal. É preciso, portanto, saber selecionar quais são os dados mais importantes para serem 
+                        mantidos dentro de si.</p>
+                    <p>Pensando nisso foi criado o princípio de localidade temporal e espacial.</p>
+                    <ul>
+                        <li><strong>Localidade temporal:</strong> se um dado foi utilizado recentemente há mais chances de ele ser 
+                            usado novamente no futuro.</li>
+                        <li><strong>Localidade espacial:</strong> se um dado foi utilizado há mais chances de os dados vizinhos também 
+                            serem utilizados pelo processador.</li>
+                    </ul>
+                </section>
+
+                <section id="sessao-5">
+                    <h2>Taxa de acerto e Taxa de erro</h2>
+                    <p>Toda vez que o processador precisa de algum dado, ele irá enviar para a conexão o endereço do dado desejado.</p>
+                    <p>Por conta do princípio de localidade, há a probabilidade de os dados requisitados estarem ou não 
+                        na memória cache. Caso eles estejam, nós chamamos isso de <strong>Cache Hit (ACERTO)</strong> e os dados são 
+                        enviados para a memória principal. Caso contrário, há um <strong>Cache Miss (FALHA)</strong> e os dados são buscados no próximo nível.</p>
+                    <p>A <strong>Taxa de Acerto (Hit Rate)</strong> se refere à porcentagem de requisições que foram encontradas no nível de cache atual. 
+                        Quanto maior for o hit rate de uma cache maior é a sua eficiência pois cada miss acrescenta pelo menos mais uma 
+                        etapa de busca de dados e, portanto, aumenta o tempo total da operação.</p>
+                </section>
+
+                <section id="sessao-6">
+                    <h2>Tamanho da cache</h2>
+                    <p>Quanto menor, mais rápida, pois uma cache grande implica em um número maior de portas envolvidas no 
+                        endereçamento, o que deixa a verificação mais lenta.</p>
+                    <p>Por outro lado, uma cache com tamanho maior possui uma taxa de acertos mais alta, pois consegue 
+                        aproveitar melhor o princípio de localidade espacial.</p>
+                    <p>Tendo as vantagens e desvantagens em mente, é comum que os processadores disponham de memórias 
+                        caches com tamanhos crescentes conforme se afastam da CPU.</p>
+
+                    <img src="src/caches.png" class="img-responsive" alt="Memória Cache distribuída em 3 níveis">
+                </section>
+
+                <section id="sessao-7">
+                    <h2>Mas e agora, como a mágica funciona?</h2>
+                    <p>Já discutimos os princípios mais básicos para compreender como uma cache funciona, mas 
+                        agora precisamos sair do nível abstrato... afinal, como a cache sabe se um determinado 
+                        dado está contido nela ou não? A resposta: <strong>FUNÇÕES DE MAPEAMENTO!!! \o/</strong></p>
+                    <p>Existem diferentes tipos de mapeamentos, sendo eles:</p>
+                    <ul>
+                        <li><strong>Mapeamento direto:</strong> cada bloco da memória principal é mapeado em um único bloco da cache.</li>
+                        <li><strong>Mapeamento associativo total:</strong> um bloco da memória principal pode ser carregado em qualquer posição da cache que esteja disponível.</li>
+                        <li><strong>Mapeamento associativo por conjunto:</strong> a memória cache é dividida em um número de conjuntos e cada conjunto possui uma quantidade fixa de blocos.</li>
+                    </ul>
+                </section>
+
+                <section id="sessao-8">
+                    <h2>Mapeamento direto</h2>
+                    <p>A posição de um bloco da memória principal na cache é determinado pela função módulo. Usa-se a seguinte expressão:</p>
+                    <p class="text-center"><strong>i = j mod m</strong></p>
+                    <p>Sendo <b>i</b> a posição na cache, <b>j</b> a posição na memória principal e <b>m</b> o número de blocos que a cache possui.</p>
+                    <p>Este é um modo de mapeamento simples e com baixo custo para a cache pois, como cada bloco possui uma posição fixa, basta verificar um único endereço para saber se ele está ou não contido na cache.</p>
+                    <p>No entanto, quanto menor o tamanho da cache maior será o número de conflitos entre diferentes endereços, diminuindo portanto a taxa de acertos.</p>
+
+                    <img src="src/mapeamento-direto.png" class="img-responsive" alt="Memória Cache com Mapeamento Direto">
+                </section>
+
+                <section id="sessao-9">
+                    <h2>Mapeamento associoativo total</h2>
+                    <p>Ao contrário do mapeamento direto, os blocos não possuem uma posição fixa. Quando um novo bloco é carregado da memória principal a cache procura o primeiro espaço vazio disponível e o insere nessa posição. Caso a cache esteja lotada, uma politica de substituição é adotada e um dos blocos é substituído pelo novo.</p>
+                    <p>A vantagem deste modo é que ele aproveita ao máximo o espaço disponível na cache. No entanto o processo de verificar se um dado está ou não contido nele é mais caro devido à necessidade de comparar todos os blocos.</p>
+
+                    <img src="src/mapeamento-associativo.png" class="img-responsive" alt="Memória Cache com Mapeamento Associativo Total">
+                </section>
+
+                <section id="sessao-10">
+                    <h2>Mapeamento associoativo por conjuntos</h2>
+                    <p>Esse tipo de mapeamento é mais utilizado para caches maiores. Ele funciona como uma mistura de ambas as 
+                        técnicas mencionadas anteriormente. A cache é dividida em conjuntos e cada bloco da memória é sempre 
+                        designado para um único conjunto, como no mapeamento direto. A diferença é que como um conjunto possui 
+                        mais de um bloco, o dado pode ser inserido em qualquer posição vazia, como ocorre no mapeamento associativo total.</p>
+                    <p>Ele possui as mesmas vantagens e desvantagens dos métodos anteriores.</p>
+
+                    <img src="src/mapeamento-conjuntos.png" class="img-responsive" alt="Memória Cache com Mapeamento Associativo por Conjuntos">
+                </section>
+
+                <section id="sessao-11">
+                    <h2>Chegamos ao fim e...</h2>
+                    <p>Aprendemos mais sobre a memória cachê e sobre a importância dela para diminuir o tempo dos acessos à 
+                        memória do computador. Caso você queira se aprofundar mais no assunto recomendamos os livros dos 
+                        aclamados <strong>David A. Patterson</strong> e <Strong>John LeRoy Hennessy</Strong>.</p>
+                </section>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Área de Rodapé -->
+    <footer class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <p class="text-center">Recurso Educacional Aberto | Creative Commons | Feito com Dedicação </p>
+            </div>
+        </div>
+    </footer>
+
+</div>
+
+    <!-- Inicializando os javascripts -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="scripts/bootstrap.min.js"></script>
+    <script src="scripts/custom.js"></script>
+
+    <script>
+        // Adicionando o Scroll-Spy à página
+        // $('body').scrollspy({ target: '#sidebar' })
+    </script>
+
+    <!-- 
+        Trabalho de Organização e Arquitetura de Computadores
+        Desenvolvido por:
+            Débora Buzon              
+            Gabriel Van Loon
+            Mathias Fernandes
+            Tamiris Tinelli
+                            
+        Um oferecimento USP - ICMC
+        jun/2019
+     -->
+
+</body>
+</html>

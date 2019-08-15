@@ -1,0 +1,77 @@
+
+1ª ETAPA 
+
+    >> Iniciar população(X); x = nroº de indivíduos
+    
+    Obs:    Quanto + indivíduos <=> + velocidade de evolução
+            Analogamente, quanto menor a pop. menor a capacidade evolutiva.
+
+2ª ETAPA
+
+    >> Avaliar os melhores indivíduos para reproduzir.
+    >> A nota de Fitness é a nota que cada individuo recebe na etapa de avaliação.
+    >> fitness(x); retorna o valor fitness de x
+
+3º ETAPA 
+
+    >> Selecionar quais os melhores individuos e utilizar seu genes para gerar uma nova geração]
+    >> Existem X formas possíveis para criar essa nova geração.
+    >> É importante que os melhores/o melhor individuo tenha a maior chance de manter seus genes.
+    >> Exemplos de abordagems:
+
+        a) O melhor "transa" com todos os outros individuos. 
+        b) Método da roleta (método utilizado por maioria dos livros de evolut. mas não necesariamente
+           é o melhor método).
+        c) Torneio de 2 - Gero um rand e sorteio 2 individuo da população. Quem tiver maior fitness ganha
+           e ele se torna o pai. Repete o processo para selecionar a mãe. Com os 2 selecionados basta
+           transar ambos e gerar um filho.
+
+4ª ETAPA
+
+    >> Crossover (ou melhor dizendo.. transa). Sendo algumas abordagens:
+
+    - Seja os individuos  x1 = (4, 9, 2) 
+                          x2 = (3, 3, 2)
+      Basta realizar cortes nos indices e sortear se no filho x3 aquele indice irá vir do 
+      pai ou da mãe.    
+
+    - Outra oção é pegar cada valor e fazer uma média aritmética para gerar os valores do filho.
+
+    Obs.: essa etapa pode ser pulada, desde que haja uma etapa decente de mutação (etapa 5)
+
+5ª ETAPA
+
+    >> Mutação - é dividida em 3 etapas
+
+        1ª Etapa - Qual filho irá receber mutação sendo que... 
+            Obs: 1ª geração - Mutar todos os filhos.
+        
+        2ª Etapa - Qual gene receberá mutação
+            Obs: mutar apenas 1 gene por enquanto.
+
+        3ª Etapa - Quanto que o gene será modificado?
+            Obs: mutar apenas 0,01 na primeira implementação.
+
+
+6ª ETAPA
+
+    >> Rearranjar a população. Existem diversas maneiras de realizar essa etapa, como
+
+        - matar todos os pais e manter todos os filhos.
+        - Copiar o melhor de todos e substitui os outros pelos filhos.
+
+    Obs: NUNCA MATAR O MELHOR INDIVIDUO E SEMPRE SALVAR O MELHOR INDIVIDUO EM UMA VARIÁVEL À PARTE.
+
+*************************************************
+
+Algoritmo para criar café
+
+    Xi = k1*Água + k2*Café + k3*Açucar = (k1,k2,k3)
+
+    Fitness >> função gosto f(x) =  |    x , se x <= 5
+                                    | 20-x , se x  > 5
+
+
+
+
+
