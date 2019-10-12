@@ -6,34 +6,26 @@
 
 using namespace std;
 
-/**
- * Typedef Indivíduo
- */ 
 typedef struct _ind{
     float   coef[3];   // Coeficientes
     float   score;    // Pontos de fitness
 } Individuo;
 
-//bool compararInd(Individuo lhs, Individuo rhs) { 
-//    return lhs.score < rhs.score; // Ordena crescente
-//}
-
-bool compararInd(Individuo lhs, Individuo rhs) { 
-   return lhs.score > rhs.score; // Ordena decrescente
-}
-
 /**
  * Variáveis importantes para o algoritmo
  */
-    const int tamanhoPop   = 50;
+    const int tamanhoPop   = 100;
     const int tamCoef      = 3;
-    const int rangeInit    = 300; // -500 <= coef <= 500
+    const int rangeInit    = 2000; // -rangeInit <= coef <= rangeInit
     
-    const int   taxaMutacao  = 100;     // NÂO ESTA SENDO UTILIZADO POR ENQUANTO..
-    const int   rangeMutacao = 1000;      // range/divRange 
-    const float divRangeMutacao = 10.0; // 
+    // Configurando a taxa de mutação.
+    const int   rangeMutacao    = 1000;  // range/divRange 
+    const float divRangeMutacao = 100.0; 
+    float       rangeMultiply   = 1.0;
+    int         contEstagnada   = 0;
 
-    const int maxGeracoes  = 200; 
+    const int maxGeracoes     = 400; 
+    const int geracaoGenocida = 50;
 
     Individuo populacao[tamanhoPop];
     Individuo filhos[tamanhoPop];
@@ -43,22 +35,44 @@ bool compararInd(Individuo lhs, Individuo rhs) {
     float     avgScore;  
 
     int       contGeracao;
-    
+
+/**
+ * Typedef Indivíduo
+ */ 
+
+    bool compararInd(Individuo lhs, Individuo rhs) { 
+        return lhs.score > rhs.score; // Ordena decrescente
+    }
+
 /**
  * Funções importantes
  */
+    float gerarCoef(){
+        return (rand()%(2*rangeInit))-rangeInit;
+    }
+
+
     int iniciarPopulacao(){
         srand(time(NULL));
-
         for(int i = 0; i < tamanhoPop; i++){
             for(int k = 0; k < 3; k++){
-                populacao[i].coef[k] = (rand()%(2*rangeInit))-rangeInit;
+                populacao[i].coef[k] = gerarCoef();
+            }
+        }
+    }
+
+    int genocidioPopulacao(){
+        for(int i = 3*(tamanhoPop/4); i < tamanhoPop; i++){
+            for(int k = 0; k < 3; k++){
+                populacao[i].coef[k] = gerarCoef();
             }
         }
     }
 
     float calcularFitness(Individuo* i){
         float x = i->coef[0];
+        float y = i->coef[1];
+        float z = i->coef[2];
         // f(x) = café OU f(x) = 20-café
         // return  (x <= 10.0) ? x : 20.0 - x;
 
@@ -67,6 +81,10 @@ bool compararInd(Individuo lhs, Individuo rhs) {
 
         // Senoide doida
         return 2*cos(0.39*x) + 5*sin(0.5*x) + 0.5*cos(0.1*x) + 10*sin(0.7*x) + 5*sin(1*x) + 5*sin(0.35*x);
+
+        // Função de duas variaiveis e achar um ponto plano
+        //return -fabs( (x*x*y)-(2.0*x*y*y)+(3.0*x*y)+4.0 );
+    
     }
 
     void exibirPopulacao(int onlyBest){
@@ -77,7 +95,7 @@ bool compararInd(Individuo lhs, Individuo rhs) {
         }
     }
 
-    void cross_1xTodos(){
+    void cross_BestxTodos(){
 
         Individuo parent1 = populacao[0];
         int       totalScore, val;
@@ -100,30 +118,44 @@ bool compararInd(Individuo lhs, Individuo rhs) {
 
     }
 
+    void cross_TorneioDe2(){
+        int totalScore, val, p1, p2;
+
+        for(int i = 1; i < tamanhoPop; i++){
+            p1 = rand()%tamanhoPop;
+            p2 = rand()%tamanhoPop;   
+            Individuo parent1 = (populacao[p1].score > populacao[p2].score) ? populacao[p1] : populacao[p2];
+           
+            p1 = rand()%tamanhoPop;
+            p2 = rand()%tamanhoPop;
+            Individuo parent2 = (populacao[p1].score > populacao[p2].score) ? populacao[p1] : populacao[p2];
+
+            for(int j = 0; j < tamCoef; j++){
+                val = rand()%100;
+                if(val < 50)
+                    filhos[i].coef[j] = parent1.coef[j];
+                else 
+                    filhos[i].coef[j] = parent2.coef[j];
+            }
+
+            populacao[i] = filhos[i];
+        } 
+    }
+
     void mutacao(){
         // Aplica a mutacao em todos os filhos e sempre altera 1 dos genes
         for(int i = 1; i < tamanhoPop; i++){
             int coef   = rand()%tamCoef;
             int sinal  = rand()%2;
-            int change = rand()%rangeMutacao;
+            int change = rand()%(rangeMutacao);
 
             if(sinal == 0)
-                populacao[i].coef[coef] += (change/divRangeMutacao);
+                populacao[i].coef[coef] += rangeMultiply*(change/divRangeMutacao);
             else 
-                populacao[i].coef[coef] -= (change/divRangeMutacao);
-            
-        }
-    }
+                populacao[i].coef[coef] -= rangeMultiply*(change/divRangeMutacao);
 
-    void mutacao2(){
-        // Essa mutação tem a chance de gerar algum dos genes novamente.
-        for(int i = 1; i < tamanhoPop; i++){
-            int c     = rand()%tamCoef;
-            int rate  = rand()%100;
-
-            if(rate < taxaMutacao){
-                populacao[i].coef[c] = (rand()%2000) - 1000;
-            }
+            if(populacao[i].coef[coef] < -rangeMutacao ||  rangeMutacao < populacao[i].coef[coef])
+                populacao[i].coef[coef] = gerarCoef();
         }
     }
 
@@ -160,15 +192,29 @@ int main(void){
         if(populacao[0].score > melhorIndividuo.score){
             melhorIndividuo      = populacao[0];
             idadeMelhorIndividuo = contGeracao;
+            rangeMultiply  = 1;
+        } else {
+            contEstagnada++; 
         }
-            
+
+        // Se a população não evolui faz muito tempo, aumenta a taxa de mutação em 10x
+        if(contEstagnada == 5){
+            rangeMultiply *= 10;
+            contEstagnada  = 0;
+        }
 
         // 3ª Etapa - Gerar os filhos com os pais atuais
-        cross_1xTodos();
+        // cross_BestxTodos();
+        cross_TorneioDe2();
 
         // 4ª Etapa - Mutação nos genes dos filhos
         mutacao();
-        // mutacao2();
+
+        // Caso seja época de genocidio reseta todos os 25% piores
+        if(contGeracao % geracaoGenocida == 0 && rangeMultiply == 1){
+            // genocidioPopulacao();
+        }
+        
     }
 
     printf("\tMELHOR INDIVIDUO NASCEU NA GERAÇÃO %d\n", idadeMelhorIndividuo);

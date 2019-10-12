@@ -1,0 +1,33 @@
+
+UTILIZANDO DADOS GRÁFICOS PARA VERIFICAR A EFICIÊNCIA DO A.G.
+
+    - Gerar um gráfico mostrando o Score do melhor individuo em cada uma das épocas
+    e também o valor do Score médio de todos os indivíduos.
+
+    - Verificar se a distancia do Avg com o Best é muito grande. Caso positivo talvez a taxa de mutação
+    esteja muito alta e deva ser ajustada.
+
+    - Verificar se o A.G. consegue chegar em uma valor bom e como ele está performando no decorrer 
+    das épocas.
+
+OUTROS INSIGHTS E DÚVIDAS
+
+    - Para gerar os valores dos coeficientes, sempre gerar um Range para gerar os números, mesmo que
+    seja apenas de forma intuitíva.
+
+    - O valor que irá ser mutado, pode ser também feito por meio de um range. isso torna as mudanças
+    mais maleaveis.
+
+    - TODOS OS FILHOS DEVEM SOFRER SEMPRE AO MENOS 1 MUTAÇÃO, SENÃO O ALGORITMO NÃO EVOLUI CORRETAMENTE.
+
+ATUALIZANDO A TAXA DE MUTAÇÃO
+
+    - Se passa um número N defindo de gerações e o melhor fitness não melhorou, vale a pena atualizar a taxa
+    de mutação para causar uma maior pertubação nos individuos.
+
+GENOCIDIO / RESET DOS PIORES DA POPULAÇÃO
+
+    - A cada numero de N gerações, é possível matar os piores elementos da população e gerar
+    eles novamente de maneira aleatória. Isso aumenta a aleatoriedade do sistema e permite que 
+    haja mais diversidade.
+

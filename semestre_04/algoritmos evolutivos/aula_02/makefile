@@ -1,5 +1,5 @@
 all:
-	g++ -o exec main.cpp
+	g++ -o exec main.cpp -lm
 run:
 	./exec
 write:
