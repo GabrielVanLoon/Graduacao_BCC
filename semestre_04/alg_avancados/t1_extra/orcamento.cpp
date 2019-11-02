@@ -87,11 +87,11 @@ int main(void){
     std::fill(memo.begin(), memo.end(), -1.0);
 
     // Descomente para visualizar o vetor ordenado...
-    printf("\nPacotes Ordenados:\n");
-    for(int i = 0; i < v.size(); i++){
-        printf("%d %d %.2f\n", v[i].ini, v[i].fim, v[i].custo);
-    }
-    printf("\n");
+    // printf("\nPacotes Ordenados:\n");
+    // for(int i = 0; i < v.size(); i++){
+    //     printf("%d %d %.2f\n", v[i].ini, v[i].fim, v[i].custo);
+    // }
+    // printf("\n");
     
     // 3ª Etapa - Vamos executar o nosso algoritmo que irá retornar o menor custo
     //            para comprar os pacotes do projeto. 

@@ -2,17 +2,17 @@
  * T1 Algoritmos Avançaçdos - Código Huffman
  * 
  * OBJETIVO: 
- * Encontrar a árvore do código de Huffman dado um texto
- * escrito em ASCII qualquer.
+ * Ler uma string e comprimir seus caracteres utilizando a estratégia
+ * gulosa do código de Huffman. O programa:
+ * 1º - Gera uma árvore binária que mapeia o código de huffman com seus
+ *      respectivos caracteres.
+ * 2º - Exibe os dados da tabela utilizando um algoritmo recursivo.
  * 
  * ENTRADAS: 
  * Um texto em ASCII qualquer tal que o fim de texto termine com um \n.
  * 
  * SAIDA:
- * Arvore de Huffman exibida da camada superior até a camada interior (BFS) mostrando
- * a contagem das frequencias (e o char associado, no caso de nós folhas).
- * 
- * Além disso, também exibe
+ * Tabela que associa cada caracter à sua frequência e seu código binário.
  */
 #include <iostream>
 #include <algorithm>
@@ -30,9 +30,11 @@ typedef struct _no {
     int  altura;
 } No;
 
+// Ordena variáveis do tipo No em ordem decrescente baseado no
+// valor da sua frequência.
 struct CompararNos { 
     bool operator()(No* const& n1, No* const& n2){ 
-        return n1->freq > n2->freq; // Ordena decrescente
+        return n1->freq > n2->freq;
     } 
 }; 
 
@@ -50,7 +52,7 @@ std::priority_queue<No*, std::vector<No*>, CompararNos> pq;
 
 /**
  * Exibe na tela a árvore gerada pelo Código Huffman utilizando uma BFS para imprimir
- * camada por camada.
+ * camada por camada. Além disso faz o mapeamento da altura final de cada um dos nós da árvore.
  */
 void printBFS(No* root);
 
@@ -75,11 +77,11 @@ int main(void){
     }
 
     // 2ª Etapa - Analisa as Frequencias geradas. Os caracteres que aparecerem ao menos 1 vez
-    //            serão nós valídos e serão adicionados à Heap.
-    printf("\nFrequências por caracter:\n");
+    //            serão nós valídos e serão adicionados na Heap.
+    // printf("\nFrequências por caracter:\n");
     for(int i = 0; i < 300; i++){
         if(freq[i].freq > 0){
-            printf("'%c' %d\n", freq[i].ascii, freq[i].freq);
+            // printf("'%c' %d\n", freq[i].ascii, freq[i].freq);
             freq[i].ehRaiz  = true;
             freq[i].ehFolha = true;
             freq[i].l = freq[i].r = NULL;
@@ -87,13 +89,12 @@ int main(void){
         }
     }
 
-    // 3º Etapa - Remove os nós da Heap com menos frequencia e vai montando uma nova árvore
+    // 3º Etapa - Remove da Heap os nós com menor frequência e vai montando uma nova árvore
     while(pq.size() > 1){
-        //No* n = pq.top(); pq.pop();
-        //printf("%c %d\n", n->ascii, n->freq);
         No* nl = pq.top(); pq.pop();
         No* nr = pq.top(); pq.pop();
         
+        // O novo nó tem como frequencia a soma dos seus dois nós filhos.
         extra[e] = {nl->freq+nr->freq, ' ', false, true, nl, nr, 0};
         pq.push(&extra[e]);
         e++;   
@@ -101,11 +102,9 @@ int main(void){
 
     // 4ª Etapa - Exibe o print da Árvore utilizando uma BFS e por fim a tabela dos códigos gerados.
     No* root = pq.top();
-    printBFS(root);
+    printBFS(root); // Descomente caso queira validar a árvore utilizando BFS.
     printCodigos(root);
     
-
-
     return 0;
 }
 
@@ -132,10 +131,10 @@ void printBFS(No* root){
 
         // Exibe na tela o Nó atual
         if(n->altura == alturaAtual){
-            printf("{%d,%d,'%c'}   ", n->freq, n->ehFolha, n->ascii);
+            printf("{%d,%d,'%c'} ", n->freq, n->ehFolha, n->ascii);
         }else {
             alturaAtual = n->altura;
-            printf("\n{%d,%d,'%c'}   ", n->freq, n->ehFolha, n->ascii);
+            printf("\n{%d,%d,'%c'} ", n->freq, n->ehFolha, n->ascii);
         }
     }
 }
@@ -143,7 +142,7 @@ void printBFS(No* root){
 void printCodigos(No* n){
    
     if(n->altura == 0)
-        printf("\n\nCaracter\tFrequencia\tCódigo\n");
+        printf("\n\nSímbolo\t\tFrequencia\tCódigo\n");
    
     // Caso de parada - n eh folha
     if(n->ehFolha){
