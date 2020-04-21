@@ -1,0 +1,12 @@
+# started on Tue Apr 21 15:12:39 2020
+
+
+ Performance counter stats for './exec 100 u':
+
+        20.753.838      L1-dcache-loads                                             
+           203.943      L1-dcache-load-misses     #    0,98% of all L1-dcache hits  
+         1.200.132      branches                                                    
+            18.729      branch-misses             #    1,56% of all branches        
+
+       0,008818325 seconds time elapsed
+

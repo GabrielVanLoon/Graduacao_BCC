@@ -1,0 +1,12 @@
+# started on Tue Apr 21 15:12:38 2020
+
+
+ Performance counter stats for './exec 10 u':
+
+           803.180      L1-dcache-loads                                             
+            49.490      L1-dcache-load-misses     #    6,16% of all L1-dcache hits  
+           527.253      branches                                                    
+            16.194      branch-misses             #    3,07% of all branches        
+
+       0,001962540 seconds time elapsed
+

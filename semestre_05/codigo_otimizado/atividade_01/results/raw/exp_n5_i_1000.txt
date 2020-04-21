@@ -1,0 +1,12 @@
+# started on Tue Apr 21 15:11:32 2020
+
+
+ Performance counter stats for './exec 1000 i':
+
+    22.065.342.032      L1-dcache-loads                                             
+       129.308.960      L1-dcache-load-misses     #    0,59% of all L1-dcache hits  
+     2.045.827.073      branches                                                    
+         1.201.269      branch-misses             #    0,06% of all branches        
+
+       5,660489694 seconds time elapsed
+

@@ -1,0 +1,12 @@
+# started on Tue Apr 21 15:11:05 2020
+
+
+ Performance counter stats for './exec 10 i':
+
+           805.578      L1-dcache-loads                                             
+            44.259      L1-dcache-load-misses     #    5,49% of all L1-dcache hits  
+           527.639      branches                                                    
+            16.000      branch-misses             #    3,03% of all branches        
+
+       0,001377065 seconds time elapsed
+
