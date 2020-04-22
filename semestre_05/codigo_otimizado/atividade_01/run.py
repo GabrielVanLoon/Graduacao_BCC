@@ -65,24 +65,19 @@ def preproccess_data():
 
 def processs_resultados(df):
     # df_i_10    = df[ (df['N'] == 10)    & (df['option'] == 'i')]
-    # df_i_100   = df[ (df['N'] == 100)   & (df['option'] == 'i')]
-    # df_i_1000  = df[ (df['N'] == 1000)  & (df['option'] == 'i')]
-    # df_u_10    = df[ (df['N'] == 10)    & (df['option'] == 'u')]
-    # df_u_100   = df[ (df['N'] == 100)   & (df['option'] == 'u')]
-    # df_u_1000  = df[ (df['N'] == 1000)  & (df['option'] == 'u')]
-
-    # 1º - Gerando Box plot dos gráficos de maneira simples e calculando o intervalo de confiança 
+    
     options = ['i', 'u'] 
     values  = [10, 100, 1000]
+    metrics = ['L1-loads', 'L1-misses-raw', 'L1-misses', 'branches', 'branch-misses-raw', 'branch-misses']
 
+    # 1º - Gerando Box plot dos gráficos de maneira simples e calculando o intervalo de confiança 
     for opt in options:
         str_option = 'Interchange' if (opt == 'i') else 'Unroll'
         print("[+] Gerando Imagens para Loop {}".format(str_option))
         
         for val in values:
             temp_df = df[ (df['N'] == val) & (df['option'] == opt)]
-            
-            for c in ['L1-loads', 'L1-misses-raw', 'L1-misses', 'branches', 'branch-misses-raw', 'branch-misses']:
+            for c in metrics:
                 # Calculando o intervalo de confiança à 95% com t-student
                 conf_interval = (2.5096 * temp_df[c].std()) / math.sqrt(float(val))
 
@@ -92,11 +87,18 @@ def processs_resultados(df):
                 #plt.show()
                 plt.savefig('results/images/exp_n{}_{}_{}.txt.'.format(val, opt, c))
                 plt.close('all') #impedindo de abrir muitas figuras simultaneamente
-            
+    
+    # 2º gerando Gráficos para comparar as métricas
+    for val in values:
+        temp_df = df[ (df['N'] == val)]
+        for c in metrics:
+            temp_df.boxplot(column=c, by=['N','option'])
+            plt.savefig('results/comparisons/cmp_n{}_{}.txt.'.format(val, c))
+            plt.close('all')
 
 if __name__ == '__main__':
     print("[+] Iniciando experimentos no perf ({} repetições/configuração)...".format(NUM_EXPERIMENTS))
-    #exportar_resultados()
+    exportar_resultados()
     print("[+] Experimentos finalizados.")
     
     print("[+] Iniciando pré-processamento...")
