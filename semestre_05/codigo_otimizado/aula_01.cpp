@@ -7,7 +7,7 @@ using namespace std;
 // Ferramenta PERF -> Exibe métricas acerca do software utilizado
 // e é útil para verificar questões de hardware como cache e branch miss.
 //
-// sudo perf stat -e L1-dcache-loads,L1-dcache-load-misses './exec 100 100 100'
+// sudo perf stat -e L1-dcache-loads,L1-dcache-load-misses './exec 1 100 100'
 
 /** 
     LOOP UNROLLING
