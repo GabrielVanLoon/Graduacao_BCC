@@ -1,0 +1,20 @@
+ ;1.000000;0.000000
+-O1;1.000000;0.000000
+-O2;1.000000;0.000000
+-O3;1.000000;0.000000
+-finline-small-functions;1.000000;0.000000
+-fstrict-aliasing;1.000000;0.000000
+-ftree-pre;1.000000;0.000000
+-ftree-vrp;1.000000;0.000000
+-freorder-functions;5.666667;-4.666667
+-fcaller-saves;8.000000;-7.000000
+-freorder-blocks;8.000000;-7.000000
+-fcaller-saves;8.000000;-7.000000
+-finline-small-functions;8.000000;-7.000000
+-fstrict-aliasing;8.000000;-7.000000
+-ftree-pre;8.000000;-7.000000
+-ftree-vrp;8.000000;-7.000000
+-freorder-functions;8.000000;-7.000000
+-fcaller-saves;8.000000;-7.000000
+-freorder-blocks;8.000000;-7.000000
+-fstrict-aliasing;8.000000;-7.000000
