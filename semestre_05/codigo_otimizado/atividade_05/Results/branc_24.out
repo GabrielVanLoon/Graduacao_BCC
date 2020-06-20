@@ -1,0 +1,14 @@
+# started on Fri Jun 19 18:50:54 2020
+
+
+ Performance counter stats for './exec':
+
+         3.552.981      branches                                                    
+            15.655      branch-misses             #    0,44% of all branches        
+
+       0,010674962 seconds time elapsed
+
+       0,010620000 seconds user
+       0,000000000 seconds sys
+
+
