@@ -14,7 +14,7 @@ def exec_profile(flag):
     global media_caso_base
     global contador
     # Compilando com a flag
-    os.system('g++ sum.c -msse3 -o exec {}'.format(flag))
+    os.system('gcc sum.c -msse3 -o exec {}'.format(flag))
 
     # Executano os testes e tirando a média dos valores
     for i in range(0, qtd_repeticoes):

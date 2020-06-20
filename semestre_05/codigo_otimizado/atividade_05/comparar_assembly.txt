@@ -1,0 +1,7 @@
+Comandos para comparar os assemblys e verificar se gerou códigos diferentes:
+
+gcc -msse3 -S sum.c 
+mv sum.s sum1.s
+gcc -msse3 -S sum.c -ftree-vectorize
+mv sum.s sum2.s
+diff sum1.s sum2.s
