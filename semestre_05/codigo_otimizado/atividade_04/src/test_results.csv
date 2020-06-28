@@ -1,0 +1,2 @@
+ ;14.244276;0.000000
+-finline -fstrict-aliasing -ftree-pre -ftree-vrp -ftree-ch -fcaller-saves -freorder-blocks -fguess-branch-probability -fpartial-inlining -foptimize-sibling-calls -fdce -fpeephole2 -ftree-partial-pre;14.114725;0.009095

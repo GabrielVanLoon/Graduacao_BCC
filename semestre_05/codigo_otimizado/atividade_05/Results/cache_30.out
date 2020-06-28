@@ -1,0 +1,10 @@
+# started on Sat Jun 20 17:34:39 2020
+
+
+ Performance counter stats for './exec':
+
+           258.373      cache-references                                            
+           174.505      cache-misses              #   67,540 % of all cache refs    
+
+       0,014216055 seconds time elapsed
+

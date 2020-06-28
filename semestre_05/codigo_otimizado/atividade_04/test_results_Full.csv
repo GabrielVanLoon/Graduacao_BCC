@@ -1,0 +1,22 @@
+ ,14.077767,0.000000
+-O3,2.127529,0.848873
+-O2,2.581083,0.816655
+-O1,2.895254,0.794339
+-fomit-frame-pointer,11.936843,0.152078
+-ftree-vrp,13.987449,0.006416
+-ftree-ch,13.993222,0.006006
+-fguess-branch-probability,14.001763,0.005399
+-foptimize-sibling-calls,14.003107,0.005303
+-fstrict-aliasing,14.005320,0.005146
+-fcaller-saves,14.009683,0.004836
+-fdce,14.014277,0.004510
+-freorder-blocks,14.021394,0.004004
+-ftree-partial-pre,14.027943,0.003539
+-fpartial-inlining,14.036853,0.002906
+-fpeephole2,14.037513,0.002859
+-ftree-pre,14.042101,0.002533
+-finline,14.065316,0.000884
+-freorder-functions,14.169841,-0.006540
+-freorder-functions,14.140258,-0.004439
+-finline-small-functions,14.111786,-0.002416
+-fif-conversion,14.110979,-0.002359

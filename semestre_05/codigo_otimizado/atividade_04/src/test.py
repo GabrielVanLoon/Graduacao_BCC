@@ -1,7 +1,4 @@
 import os, math, subprocess
-import numpy as np 
-import pandas as pd
-import matplotlib.pyplot as plt
 
 # python3 test.py
 
@@ -9,26 +6,27 @@ qtd_repeticoes  = 3
 media_caso_base = 0 # Salva a media do caso base flag == ' ' para usar em outras computacoes
 flags = [
     ' ',
-    '-O1',
-    '-O2',
-    '-O3',
-    '-finline',
-    '-fstrict-aliasing',
-    '-ftree-pre',
-    '-ftree-vrp',
-    '-ftree-ch',
-    '-freorder-functions',
-    '-fcaller-saves',
-    '-freorder-blocks',
-    '-finline-small-functions',
-    '-fomit-frame-pointer',
-    '-fguess-branch-probality',
-    '-fpartial-inlining',
-    '-foptimize-sibling-calls',
-    '-fdce',
-    '-fpeephole2',
-    '-fif-conversion',
-    '-ftree-partial-pre']
+    #'-O1',
+    #'-O2',
+    #'-O3',
+    #'-finline',
+    #'-fstrict-aliasing',
+    #'-ftree-pre',
+    #'-ftree-vrp',
+    #'-ftree-ch',
+    #'-freorder-functions',
+    #'-fcaller-saves',
+    #'-freorder-blocks',
+    #'-finline-small-functions',
+    #'-fomit-frame-pointer',
+    #'-fguess-branch-probability',
+    #'-fpartial-inlining',
+    #'-foptimize-sibling-calls',
+    #'-fdce',
+    #'-fpeephole2',
+    #'-fif-conversion',
+    #'-ftree-partial-pre'
+    '-finline -fstrict-aliasing -ftree-pre -ftree-vrp -ftree-ch -fcaller-saves -freorder-blocks -fguess-branch-probability -fpartial-inlining -foptimize-sibling-calls -fdce -fpeephole2 -ftree-partial-pre']
 
 def exec_profile(flag):
     global media_caso_base
@@ -38,7 +36,7 @@ def exec_profile(flag):
     # Executano os testes e tirando a média dos valores
     media = 0.0
     for i in range(0, qtd_repeticoes):
-        proc = subprocess.Popen("./exec", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        proc = subprocess.Popen("./exec 11", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         _, stderr = proc.communicate()
         media += float(stderr.decode("utf-8")) 
     media = media/float(qtd_repeticoes)

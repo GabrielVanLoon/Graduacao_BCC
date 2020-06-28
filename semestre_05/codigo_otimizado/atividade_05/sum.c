@@ -6,9 +6,6 @@
                         //              vamos usar blocos de 8192 floats por iteração
 #define BLOCK_SIZE 8192
 
-// DEFINE O MODO UTILIZDo
-#define INTRINSIC_BLOCK 1
-
 #ifdef INTRINSIC
     float sum_vectorized(float* v){
         int i;
@@ -30,7 +27,7 @@
 
         return v[0];
     }
-    
+
 #elif INTRINSIC_BLOCK
     float sum_vectorized(float* v, int size){
         int i;
