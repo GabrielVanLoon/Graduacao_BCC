@@ -1,11 +1,11 @@
-# Projeto Final de Arduino: Minigame "Nao Exploda!"
+# Projeto Final de Arduino: Minigame "Não Exploda!"
 
-## INSTRUCOES
-O jogo se inicia com 5 jogadores e 5 leds acessos. Em cada rodada um dos Led's eh sorteado 
-aleatoriamente para conter uma bomba escondida. Os jogadores se revezam e apertam os botoes 
-que representam os Led's e aquele que apertar o que contem a bomba eh eliminado. Uma nova 
+## COMO JOGAR
+O jogo se inicia com 5 jogadores e 5 leds acessos. Em cada rodada um dos Led's é sorteado 
+aleatoriamente para conter uma bomba escondida. Os jogadores se revezam e apertam os botões 
+que representam os Led's e aquele que apertar o que contem a bomba é eliminado. Uma nova 
 rodada se inicia, porém com 4 jogadores, e as etapas se repetem eliminando um jogador por 
-rodada ate que haja um vencedor.
+rodada até que haja um vencedor.
 
 ## MATERIAIS UTILIZADOS
 - 20 Jumpers
@@ -14,17 +14,19 @@ rodada ate que haja um vencedor.
 - 5 Push Buttons
 - Buzzer 5 Voltz
 
-## CONEXOES NA PROTOBOARD (Visualizar esquema na pasta /images )
+## CONEXÕES NA PROTOBOARD
 - Leds: digitalPin [mode:OUTPUT] -> Led -> Resistor 220 Ohm -> GND
 - PushButtons: digitalPin [mode:INPUT_PULLUP] -> Push Button -> GND
 - Buzzer: digitalPin [mode:OUTPUT] -> Buzzer -> GND
-Obs: Caso se decida nao utilizar o modo PULLUP nos Push Buttons, eh necessario a 
-utilizacao de um resistor de 10k Ohms como pull down no circuito.
+Obs: Caso se decida não utilizar o modo PULLUP nos Push Buttons, é necessário a 
+utilização de um resistor de 10k Ohms como pull down no circuito.
+
+![Protoboard Schema.jpg](images/Protoboard_Schema.jpg)
 
 ## EXTRA
 Ao fim de cada jogatina, o arduino executa um trecho de musica do jogo Legend 
-of Zelda, sendo a partitura utilizada para a transcricao das notas devidamente
-referênciadas no código abaixo.
+of Zelda, sendo a partitura utilizada para a transcrição das notas devidamente
+referênciadas no código.
 
 ## AUTORES
 Gabriel Van Loon Bode da Costa Dourada Fuentes Rojas - gabrielvanloon@usp.br  
