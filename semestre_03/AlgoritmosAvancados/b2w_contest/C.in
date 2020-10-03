@@ -1,0 +1,16 @@
+6 7
+
+computador 2000 6
+celular 1000 1
+fone 600 2
+mouse 200 3
+teclado 300 4
+monitor 500 5
+
+imprimir 5
+ordenar_relevancia
+imprimir 1
+ordenar_maior_preco
+imprimir 2
+ordenar_menor_preco
+imprimir 3
