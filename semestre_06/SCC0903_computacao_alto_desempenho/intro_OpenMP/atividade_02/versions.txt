@@ -1,0 +1,26 @@
+atividade_02_serial.c
+---------------------
+Implementa a versão serial para fins de comparação do tempo de execução do algoritmo
+
+
+atividade_02_v1.c
+-----------------
+Primeira tentativa que funcionou no PC local mas não no cluster. Aparentemente a taskwait
+não sincroniza tão bem caso haja um loop gerando uma longa fila de tasks.
+
+
+atividade_02_v2.c
+-----------------
+Separamos as a região paralela em 3 regiões distintas, mas perdeu a eficiência do speedup 
+devido ao custo os joins.
+
+
+atividade_02_v3.c (Versão Final)
+-----------------
+Retornamos a versão paralela em apenas uma, utilizamos a clausula default(none) para averiguar
+se a visibilidade de cada uma das variáveis estava sendo feita corretamente e conseguimos um
+speedup linear.
+
+atividade_02_v4.c (@TODO)
+-------------------------
+O particionamento por funcionalidades deu tudo certo, agora seria possível implementar o por dados.
